@@ -4,31 +4,31 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import ReviewForm from '@/components/ReviewForm';
 import ReviewsList from '@/components/ReviewsList';
-import { IRestaurant } from '@/models/Restaurant';
+import { ICook } from '@/models/Cook';
 import { IReview } from '@/models/Review';
 
-interface RestaurantWithReviews extends IRestaurant {
+interface CookWithReviews extends ICook {
   averageRating: number;
   reviewCount: number;
   reviews: IReview[];
 }
 
-export default function RestaurantDetailPage() {
+export default function CookDetailPage() {
   const params = useParams();
   const id = params.id as string;
 
-  const [restaurant, setRestaurant] = useState<RestaurantWithReviews | null>(null);
+  const [cook, setCook] = useState<CookWithReviews | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showReviewForm, setShowReviewForm] = useState(false);
 
   useEffect(() => {
     if (id) {
-      fetchRestaurant();
+      fetchCook();
     }
   }, [id]);
 
-  const fetchRestaurant = async () => {
+  const fetchCook = async () => {
     try {
       setLoading(true);
       setError(null);
@@ -37,13 +37,13 @@ export default function RestaurantDetailPage() {
       const data = await response.json();
 
       if (data.success) {
-        setRestaurant(data.data);
+        setCook(data.data);
       } else {
-        setError(data.error || 'Failed to fetch restaurant');
+        setError(data.error || 'Failed to fetch cook');
       }
     } catch (err) {
       setError('Network error occurred');
-      console.error('Error fetching restaurant:', err);
+      console.error('Error fetching cook:', err);
     } finally {
       setLoading(false);
     }
@@ -51,7 +51,7 @@ export default function RestaurantDetailPage() {
 
   const handleReviewAdded = () => {
     setShowReviewForm(false);
-    fetchRestaurant(); // Refresh data to show new review
+    fetchCook(); // Refresh data to show new review
   };
 
   const renderStars = (rating: number) => {
@@ -86,13 +86,13 @@ export default function RestaurantDetailPage() {
     );
   }
 
-  if (error || !restaurant) {
+  if (error || !cook) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="text-6xl mb-4">😕</div>
-          <h2 className="text-2xl font-bold text-ink mb-2">Restaurant Not Found</h2>
-          <p className="text-ink-light mb-4">{error || 'The restaurant you are looking for does not exist.'}</p>
+          <h2 className="text-2xl font-bold text-ink mb-2">Cook Not Found</h2>
+          <p className="text-ink-light mb-4">{error || 'The cook you are looking for does not exist.'}</p>
           <a href="/" className="btn-primary">
             Back to Home
           </a>
@@ -106,33 +106,33 @@ export default function RestaurantDetailPage() {
       {/* Hero Section */}
       <div className="relative h-96 overflow-hidden">
         <img
-          src={restaurant.image}
-          alt={restaurant.name}
+          src={cook.image}
+          alt={cook.name}
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-black/50"></div>
         
-        {/* Restaurant Info Overlay */}
+        {/* Cook Info Overlay */}
         <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
           <div className="container max-w-6xl mx-auto">
             <div className="flex items-end justify-between">
               <div>
-                <h1 className="text-3xl md:text-4xl font-bold mb-2">{restaurant.name}</h1>
-                <p className="text-lg text-gray-200 mb-2">📍 {restaurant.location}</p>
+                <h1 className="text-3xl md:text-4xl font-bold mb-2">{cook.name}</h1>
+                <p className="text-lg text-gray-200 mb-2">📍 {cook.location}</p>
                 <div className="flex items-center gap-4 text-sm">
                   <div className="flex items-center gap-1">
-                    {renderStars(restaurant.averageRating)}
-                    <span className="ml-1 font-medium">{restaurant.averageRating}</span>
-                    <span className="text-gray-300">({restaurant.reviewCount} reviews)</span>
+                    {renderStars(cook.averageRating)}
+                    <span className="ml-1 font-medium">{cook.averageRating}</span>
+                    <span className="text-gray-300">({cook.reviewCount} reviews)</span>
                   </div>
-                  <span className="bg-white/20 px-2 py-1 rounded">{restaurant.priceRange}</span>
-                  {restaurant.category === 'delivery' && (
-                    <span className="bg-primary-400 text-ink px-2 py-1 rounded">🕒 {restaurant.deliveryTime}</span>
+                  <span className="bg-white/20 px-2 py-1 rounded">{cook.priceRange}</span>
+                  {cook.category === 'home-meals' && (
+                    <span className="bg-primary-400 text-ink px-2 py-1 rounded">🕒 {cook.deliveryTime}</span>
                   )}
                 </div>
               </div>
               
-              {restaurant.featured && (
+              {cook.featured && (
                 <div className="bg-primary-400 text-ink px-3 py-1 rounded-full text-sm font-medium">
                   ⭐ Featured
                 </div>
@@ -150,14 +150,14 @@ export default function RestaurantDetailPage() {
             {/* Description */}
             <div className="bg-white rounded-xl p-6 shadow-soft">
               <h2 className="text-2xl font-bold text-ink mb-4">About</h2>
-              <p className="text-ink-light leading-relaxed">{restaurant.description}</p>
+              <p className="text-ink-light leading-relaxed">{cook.description}</p>
             </div>
 
             {/* Cuisine */}
             <div className="bg-white rounded-xl p-6 shadow-soft">
               <h2 className="text-2xl font-bold text-ink mb-4">Cuisine</h2>
               <div className="flex flex-wrap gap-2">
-                {restaurant.cuisine.map((cuisine) => (
+                {cook.cuisine.map((cuisine) => (
                   <span key={cuisine} className="chip">
                     {cuisine}
                   </span>
@@ -169,7 +169,7 @@ export default function RestaurantDetailPage() {
             <div className="bg-white rounded-xl p-6 shadow-soft">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold text-ink">
-                  Reviews ({restaurant.reviewCount})
+                  Reviews ({cook.reviewCount})
                 </h2>
                 <button
                   onClick={() => setShowReviewForm(true)}
@@ -183,7 +183,7 @@ export default function RestaurantDetailPage() {
               {showReviewForm && (
                 <div className="mb-6">
                   <ReviewForm
-                    restaurantId={restaurant._id}
+                    cookId={cook._id.toString()}
                     onReviewAdded={handleReviewAdded}
                     onCancel={() => setShowReviewForm(false)}
                   />
@@ -191,7 +191,7 @@ export default function RestaurantDetailPage() {
               )}
 
               {/* Reviews List */}
-              <ReviewsList reviews={restaurant.reviews} />
+              <ReviewsList reviews={cook.reviews} />
             </div>
           </div>
 
@@ -201,41 +201,42 @@ export default function RestaurantDetailPage() {
             <div className="bg-white rounded-xl p-6 shadow-soft">
               <div className="text-center space-y-4">
                 <div className="text-2xl font-bold text-primary-500">
-                  {restaurant.category === 'delivery' ? '🚚' : 
-                   restaurant.category === 'dining' ? '🍽️' : '🍸'}
+                  {cook.category === 'home-meals' ? '🚚' : 
+                   cook.category === 'specialty-dishes' ? '⭐' : 
+                   cook.category === 'baked-goods' ? '🧁' : '🥗'}
                 </div>
                 <h3 className="text-lg font-semibold text-ink">
-                  {restaurant.category === 'delivery' ? 'Order Online' : 
-                   restaurant.category === 'dining' ? 'Book a Table' : 'View Details'}
+                  {cook.category === 'home-meals' ? 'Order Home Meals' : 
+                   cook.category === 'specialty-dishes' ? 'Order Specialties' : 
+                   cook.category === 'baked-goods' ? 'Order Baked Goods' : 'Order Healthy Options'}
                 </h3>
                 <button className="w-full btn-primary py-3">
-                  {restaurant.category === 'delivery' ? 'Order Now' : 
-                   restaurant.category === 'dining' ? 'Make Reservation' : 'Get Directions'}
+                  Order Now
                 </button>
               </div>
             </div>
 
-            {/* Restaurant Info */}
+            {/* Cook Info */}
             <div className="bg-white rounded-xl p-6 shadow-soft">
-              <h3 className="text-lg font-semibold text-ink mb-4">Restaurant Info</h3>
+              <h3 className="text-lg font-semibold text-ink mb-4">Cook Info</h3>
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
                   <span className="text-ink-light">Category:</span>
-                  <span className="text-ink capitalize">{restaurant.category}</span>
+                  <span className="text-ink capitalize">{cook.category.replace('-', ' ')}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-ink-light">Price Range:</span>
-                  <span className="text-ink">{restaurant.priceRange}</span>
+                  <span className="text-ink">{cook.priceRange}</span>
                 </div>
-                {restaurant.category === 'delivery' && (
+                {cook.category === 'home-meals' && (
                   <div className="flex justify-between">
                     <span className="text-ink-light">Delivery Time:</span>
-                    <span className="text-ink">{restaurant.deliveryTime}</span>
+                    <span className="text-ink">{cook.deliveryTime}</span>
                   </div>
                 )}
                 <div className="flex justify-between">
                   <span className="text-ink-light">Average Rating:</span>
-                  <span className="text-ink">{restaurant.averageRating}/5</span>
+                  <span className="text-ink">{cook.averageRating}/5</span>
                 </div>
               </div>
             </div>
@@ -243,7 +244,7 @@ export default function RestaurantDetailPage() {
             {/* Location */}
             <div className="bg-white rounded-xl p-6 shadow-soft">
               <h3 className="text-lg font-semibold text-ink mb-4">Location</h3>
-              <p className="text-ink-light text-sm mb-3">{restaurant.location}</p>
+              <p className="text-ink-light text-sm mb-3">{cook.location}</p>
               <button className="w-full btn-outline">
                 📍 Get Directions
               </button>

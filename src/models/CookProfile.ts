@@ -126,11 +126,11 @@ const CookProfileSchema = new Schema<ICookProfile>(
       idType: {
         type: String,
         enum: ['aadhaar', 'pan', 'passport', 'driving_license'],
-        required: [true, 'ID type is required'],
+        required: false, // Make optional during signup
       },
       idNumber: {
         type: String,
-        required: [true, 'ID number is required'],
+        required: false, // Make optional during signup
         trim: true,
       },
       idDocument: String,
@@ -145,51 +145,36 @@ const CookProfileSchema = new Schema<ICookProfile>(
     kitchenDetails: {
       kitchenPhotos: {
         type: [String],
-        validate: {
-          validator: function(photos: string[]) {
-            return photos.length >= 2;
-          },
-          message: 'At least 2 kitchen photos are required',
-        },
+        default: [], // Make optional during signup
       },
       storagePhotos: {
         type: [String],
-        validate: {
-          validator: function(photos: string[]) {
-            return photos.length >= 1;
-          },
-          message: 'At least 1 storage photo is required',
-        },
+        default: [], // Make optional during signup
       },
       utensilsPhotos: {
         type: [String],
-        validate: {
-          validator: function(photos: string[]) {
-            return photos.length >= 1;
-          },
-          message: 'At least 1 utensils photo is required',
-        },
+        default: [], // Make optional during signup
       },
       hygieneChecklist: {
         cleanKitchen: {
           type: Boolean,
-          required: true,
+          default: false, // Make optional during signup
         },
         properStorage: {
           type: Boolean,
-          required: true,
+          default: false, // Make optional during signup
         },
         qualityUtensils: {
           type: Boolean,
-          required: true,
+          default: false, // Make optional during signup
         },
         handwashStation: {
           type: Boolean,
-          required: true,
+          default: false, // Make optional during signup
         },
         wasteManagement: {
           type: Boolean,
-          required: true,
+          default: false, // Make optional during signup
         },
       },
       verified: {

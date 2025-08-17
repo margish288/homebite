@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import RestaurantCard from '@/components/RestaurantCard';
-import { ICook } from '@/models/Restaurant';
+import CookCard from '@/components/RestaurantCard';
+import { ICook } from '@/models/Cook';
 
 interface PopularCooksProps {
   searchQuery?: string;
@@ -132,8 +132,8 @@ export default function PopularCooks({ searchQuery, selectedCategory }: PopularC
           </div>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {cooks.map((restaurant) => (
-              <RestaurantCard key={restaurant._id} restaurant={restaurant} />
+            {cooks.map((cook) => (
+              <CookCard key={cook._id} cook={cook} />
             ))}
           </div>
         )}

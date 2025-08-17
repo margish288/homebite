@@ -67,8 +67,6 @@ export async function POST(request: NextRequest) {
       verificationStatus: 'pending',
       verifiedBadge: false,
       kycDetails: {
-        idType: 'aadhaar', // Default, user will update during onboarding
-        idNumber: '',
         verified: false,
       },
       kitchenDetails: {

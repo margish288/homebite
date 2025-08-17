@@ -3,12 +3,12 @@
 import { useState } from 'react';
 
 interface ReviewFormProps {
-  restaurantId: string;
+  cookId: string;
   onReviewAdded: () => void;
   onCancel: () => void;
 }
 
-export default function ReviewForm({ restaurantId, onReviewAdded, onCancel }: ReviewFormProps) {
+export default function ReviewForm({ cookId, onReviewAdded, onCancel }: ReviewFormProps) {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
   const [userName, setUserName] = useState('');
@@ -50,7 +50,7 @@ export default function ReviewForm({ restaurantId, onReviewAdded, onCancel }: Re
         body: JSON.stringify({
           userId,
           userName,
-          restaurantId,
+          cookId,
           rating,
           comment: comment.trim(),
         }),

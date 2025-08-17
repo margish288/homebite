@@ -1,11 +1,11 @@
 import Link from 'next/link';
-import { IRestaurant } from '@/models/Restaurant';
+import { ICook } from '@/models/Cook';
 
-interface RestaurantCardProps {
-  restaurant: IRestaurant;
+interface CookCardProps {
+  cook: ICook;
 }
 
-export default function RestaurantCard({ restaurant }: RestaurantCardProps) {
+export default function CookCard({ cook }: CookCardProps) {
   const renderStars = (rating: number) => {
     const stars = [];
     const fullStars = Math.floor(rating);
@@ -34,18 +34,18 @@ export default function RestaurantCard({ restaurant }: RestaurantCardProps) {
   };
 
   return (
-    <Link href={`/restaurant/${restaurant._id}`}>
+    <Link href={`/cook/${cook._id}`}>
       <div className="bg-white rounded-xl overflow-hidden shadow-soft hover:shadow-soft-lg transition-all duration-300 group cursor-pointer">
       {/* Image */}
       <div className="relative h-48 overflow-hidden">
         <img
-          src={restaurant.image}
-          alt={restaurant.name}
+          src={cook.image}
+          alt={cook.name}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />
         
         {/* Featured Badge */}
-        {restaurant.featured && (
+        {cook.featured && (
           <div className="absolute top-3 left-3 bg-primary-400 text-ink px-2 py-1 rounded-full text-xs font-medium">
             Featured
           </div>
@@ -53,13 +53,13 @@ export default function RestaurantCard({ restaurant }: RestaurantCardProps) {
 
         {/* Price Range */}
         <div className="absolute top-3 right-3 bg-black/70 text-white px-2 py-1 rounded-full text-xs font-medium">
-          {restaurant.priceRange}
+          {cook.priceRange}
         </div>
 
         {/* Delivery Time */}
-        {restaurant.category === 'delivery' && (
+        {cook.category === 'delivery' && (
           <div className="absolute bottom-3 left-3 bg-white/90 text-ink px-2 py-1 rounded-full text-xs font-medium">
-            🕒 {restaurant.deliveryTime}
+            🕒 {cook.deliveryTime}
           </div>
         )}
       </div>
@@ -69,16 +69,16 @@ export default function RestaurantCard({ restaurant }: RestaurantCardProps) {
         {/* Restaurant Name & Location */}
         <div className="mb-2">
           <h3 className="text-lg font-semibold text-ink mb-1 line-clamp-1">
-            {restaurant.name}
+            {cook.name}
           </h3>
           <p className="text-sm text-ink-light line-clamp-1">
-            📍 {restaurant.location}
+            📍 {cook.location}
           </p>
         </div>
 
         {/* Cuisine Tags */}
         <div className="flex flex-wrap gap-1 mb-3">
-          {restaurant.cuisine.slice(0, 3).map((cuisine) => (
+          {cook.cuisine.slice(0, 3).map((cuisine) => (
             <span
               key={cuisine}
               className="chip text-xs"
@@ -86,9 +86,9 @@ export default function RestaurantCard({ restaurant }: RestaurantCardProps) {
               {cuisine}
             </span>
           ))}
-          {restaurant.cuisine.length > 3 && (
+          {cook.cuisine.length > 3 && (
             <span className="chip text-xs">
-              +{restaurant.cuisine.length - 3} more
+              +{cook.cuisine.length - 3} more
             </span>
           )}
         </div>
@@ -97,21 +97,21 @@ export default function RestaurantCard({ restaurant }: RestaurantCardProps) {
         <div className="mb-4">
           <div className="flex items-center gap-2 mb-2">
             <div className="flex items-center">
-              {renderStars(restaurant.rating)}
+              {renderStars(cook.rating)}
             </div>
             <span className="text-sm font-medium text-ink">
-              {restaurant.rating}
+              {cook.rating}
             </span>
           </div>
           <p className="text-sm text-ink-light line-clamp-2">
-            {restaurant.description}
+            {cook.description}
           </p>
         </div>
 
         {/* Action Button */}
         <button className="w-full btn-primary py-2.5 text-sm font-medium">
-          {restaurant.category === 'delivery' ? 'Order Now' : 
-           restaurant.category === 'dining' ? 'Book Table' : 
+          {cook.category === 'delivery' ? 'Order Now' : 
+           cook.category === 'dining' ? 'Book Table' : 
            'View Details'}
         </button>
       </div>

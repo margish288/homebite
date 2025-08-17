@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if user already reviewed this cook
-    const existingReview = await Review.findOne({ userId, cookId });
+    const existingReview = await Review.findOne({ userId, cookId }).exec();
     if (existingReview) {
       return NextResponse.json(
         { success: false, error: 'You have already reviewed this cook' },

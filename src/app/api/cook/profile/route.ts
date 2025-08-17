@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if cook profile already exists
-    const existingProfile = await CookProfile.findOne({ userId });
+    const existingProfile = await CookProfile.findOne({ userId }).exec();
     if (existingProfile) {
       return NextResponse.json(
         { success: false, error: "Cook profile already exists" },
@@ -150,7 +150,7 @@ export async function GET(request: NextRequest) {
 
     const cookProfile = await CookProfile.findOne({ userId }).populate(
       "userId"
-    );
+    ).exec();
 
     if (!cookProfile) {
       return NextResponse.json(

@@ -38,7 +38,8 @@ export async function GET(request: NextRequest) {
           path: 'userId',
           select: 'name profileImage',
         },
-      });
+      })
+      .exec();
 
     if (!cart) {
       return NextResponse.json({
@@ -111,7 +112,7 @@ export async function POST(request: NextRequest) {
     const cookProfileId = menuItem.cookProfileId._id;
 
     // Check if user already has a cart
-    let cart = await Cart.findOne({ userId });
+    let cart = await Cart.findOne({ userId }).exec();
 
     if (cart) {
       // Check if cart is for the same cook
@@ -214,7 +215,7 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    const cart = await Cart.findOne({ userId });
+    const cart = await Cart.findOne({ userId }).exec();
     if (!cart) {
       return NextResponse.json(
         { success: false, error: 'Cart not found' },

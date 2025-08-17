@@ -1,14 +1,32 @@
+'use client';
+
+import { useState } from 'react';
+import HeroSection from '@/components/HeroSection';
+import CategoriesSection from '@/components/CategoriesSection';
+import PopularRestaurants from '@/components/PopularRestaurants';
+
 export default function Home() {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('');
+
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    setSelectedCategory('');
+  };
+
+  const handleCategorySelect = (category: string) => {
+    setSelectedCategory(category);
+    setSearchQuery('');
+  };
+
   return (
-    <main className="min-h-screen flex items-center justify-center">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
-          Welcome to HomeBite
-        </h1>
-        <p className="text-lg text-gray-600 dark:text-gray-400">
-          Your food delivery app built with Next.js
-        </p>
-      </div>
-    </main>
+    <div>
+      <HeroSection onSearch={handleSearch} />
+      <CategoriesSection onCategorySelect={handleCategorySelect} />
+      <PopularRestaurants 
+        searchQuery={searchQuery} 
+        selectedCategory={selectedCategory} 
+      />
+    </div>
   );
 }

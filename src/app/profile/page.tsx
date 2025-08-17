@@ -45,7 +45,7 @@ export default function UserProfile() {
   useEffect(() => {
     if (status === 'loading') return;
     
-    if (!session || session.user.role !== 'user') {
+    if (!session || (session.user as any)?.role !== 'user') {
       router.push('/auth/login');
       return;
     }
@@ -59,8 +59,8 @@ export default function UserProfile() {
       // Simulate loading profile data
       setTimeout(() => {
         setProfileData({
-          name: session?.user.name || '',
-          email: session?.user.email || '',
+          name: (session?.user as any)?.name || '',
+          email: (session?.user as any)?.email || '',
           phone: '+91 9876543210',
           address: '123 Main Street, Connaught Place, New Delhi',
           profileImage: '',
@@ -106,7 +106,7 @@ export default function UserProfile() {
     );
   }
 
-  if (!session || session.user.role !== 'user') {
+  if (!session || (session.user as any)?.role !== 'user') {
     return null;
   }
 

@@ -41,7 +41,7 @@ export default function LoginPage() {
         const session = await getSession();
         
         // Redirect based on role
-        if (session?.user?.role === 'cook') {
+        if ((session?.user as any)?.role === 'cook') {
           router.push('/cook/dashboard');
         } else {
           router.push('/');

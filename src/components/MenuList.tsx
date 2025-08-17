@@ -116,7 +116,7 @@ export default function MenuList({
         setMenuItems(prev => 
           prev.map(item => 
             item._id?.toString() === menuItemId 
-              ? { ...item, available }
+              ? { ...item, available } as IMenuItem
               : item
           )
         );

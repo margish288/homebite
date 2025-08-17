@@ -58,7 +58,7 @@ export default function CartSidebar() {
                   <div className="flex items-start gap-3">
                     {/* Image */}
                     <div className="w-16 h-16 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
-                      {item.menuItem.image ? (
+                      {item.menuItem?.image ? (
                         <img
                           src={item.menuItem.image}
                           alt={item.menuItem.name}

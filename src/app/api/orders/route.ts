@@ -149,7 +149,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Create order items from cart
-    const orderItems = cart.items.map(cartItem => {
+    const orderItems = cart.items.map((cartItem: any) => {
       const menuItem = cartItem.menuItemId as any;
       return {
         menuItemId: cartItem.menuItemId,

@@ -69,7 +69,7 @@ export default function CookProfile() {
   useEffect(() => {
     if (status === 'loading') return;
     
-    if (!session || session.user.role !== 'cook') {
+    if (!session || (session.user as any)?.role !== 'cook') {
       router.push('/cook/auth/login');
       return;
     }
@@ -87,8 +87,8 @@ export default function CookProfile() {
       
       setTimeout(() => {
         setProfileData({
-          name: session?.user.name || '',
-          email: session?.user.email || '',
+          name: (session?.user as any)?.name || '',
+          email: (session?.user as any)?.email || '',
           phone: '+91 9876543210',
           profileImage: '',
           businessName: "Priya's Kitchen",
@@ -148,7 +148,7 @@ export default function CookProfile() {
     );
   }
 
-  if (!session || session.user.role !== 'cook') {
+  if (!session || (session.user as any)?.role !== 'cook') {
     return null;
   }
 

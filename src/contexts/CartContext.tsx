@@ -41,7 +41,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [currentCookProfileId, setCurrentCookProfileId] = useState<string | null>(null);
 
   const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
-  const cartTotal = cartItems.reduce((total, item) => total + (item.menuItem.price * item.quantity), 0);
+  const cartTotal = cartItems.reduce((total, item) => total + (item?.menuItem?.price * item.quantity), 0);
 
   const loadCart = async () => {
     if (!(session?.user as SessionUser)?.id) return;

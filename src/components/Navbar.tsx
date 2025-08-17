@@ -87,13 +87,13 @@ export default function Navbar() {
                   {isDropdownOpen && (
                     <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-dark-surface rounded-xl shadow-soft-lg border border-gray-200 dark:border-gray-700 py-2 z-50">
                       <Link 
-                        href={session.user.role === 'cook' ? '/cook/profile' : '/profile'}
+                        href={(session.user as any)?.role === 'cook' ? '/cook/profile' : '/profile'}
                         className="block px-4 py-2 text-sm text-ink dark:text-dark-text hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                         onClick={() => setIsDropdownOpen(false)}
                       >
                         👤 Profile
                       </Link>
-                      {session.user.role === 'user' && (
+                      {(session.user as any)?.role === 'user' && (
                         <Link 
                           href="/orders"
                           className="block px-4 py-2 text-sm text-ink dark:text-dark-text hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
@@ -102,7 +102,7 @@ export default function Navbar() {
                           📦 My Orders
                         </Link>
                       )}
-                      {session.user.role  === 'cook' && (
+                      {(session.user as any)?.role === 'cook' && (
                         <>
                           <Link 
                             href="/cook/orders"

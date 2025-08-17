@@ -40,7 +40,7 @@ export default function CookLoginPage() {
         // Get the session to verify it's a cook
         const session = await getSession();
 
-        if (session?.user?.role !== "cook") {
+        if ((session?.user as any)?.role !== "cook") {
           setError(
             "This login is for home cooks only. Please use regular login."
           );
@@ -48,7 +48,7 @@ export default function CookLoginPage() {
         }
 
         const cookProfileResponse = await fetch(
-          `/api/cook/profile?userId=${session.user.id}`,
+          `/api/cook/profile?userId=${(session?.user as any)?.id}`,
           {
             method: "GET",
           }

@@ -2,7 +2,10 @@ import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import connectDB from "@/lib/mongodb";
-import User from "@/models/User";
+import { Model, Types } from 'mongoose';
+import UserModel, { IUser } from "@/models/User";
+
+const User = UserModel as Model<IUser>;
 
 const handler = NextAuth({
   providers: [
@@ -36,7 +39,7 @@ const handler = NextAuth({
           }
 
           return {
-            id: user._id.toString(),
+            id: (user._id as Types.ObjectId).toString(),
             email: user.email,
             name: user.name,
             role: user.role,

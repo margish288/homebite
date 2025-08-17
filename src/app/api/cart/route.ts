@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
-import Cart from '@/models/Cart';
-import MenuItem from '@/models/MenuItem';
-import { Types } from 'mongoose';
+import { Model, Types } from 'mongoose';
+import CartModel, { ICart } from '@/models/Cart';
+import MenuItemModel, { IMenuItem } from '@/models/MenuItem';
+
+const Cart = CartModel as Model<ICart>;
+const MenuItem = MenuItemModel as Model<IMenuItem>;
 
 export async function GET(request: NextRequest) {
   try {

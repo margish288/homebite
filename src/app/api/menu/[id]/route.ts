@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
-import MenuItem from '@/models/MenuItem';
-import { Types } from 'mongoose';
+import { Model, Types } from 'mongoose';
+import MenuItemModel, { IMenuItem } from '@/models/MenuItem';
+
+const MenuItem = MenuItemModel as Model<IMenuItem>;
 
 export async function GET(
   request: NextRequest,

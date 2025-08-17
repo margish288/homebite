@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/mongodb";
-import Cook from "@/models/Cook";
-import Review from "@/models/Review";
+import { Model } from 'mongoose';
+import CookModel, { ICook } from "@/models/Cook";
+import ReviewModel, { IReview } from "@/models/Review";
+
+const Cook = CookModel as Model<ICook>;
+const Review = ReviewModel as Model<IReview>;
 
 export async function GET(
   request: NextRequest,

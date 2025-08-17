@@ -1,8 +1,11 @@
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
-import Cook from '@/models/Cook';
-import Review from '@/models/Review';
-import { Types } from 'mongoose';
+import { Model, Types } from 'mongoose';
+import CookModel, { ICook } from '@/models/Cook';
+import ReviewModel, { IReview } from '@/models/Review';
+
+const Cook = CookModel as Model<ICook>;
+const Review = ReviewModel as Model<IReview>;
 
 const sampleReviews = [
   {
@@ -73,7 +76,7 @@ export async function POST() {
     // Update cook ratings based on reviews
     for (const cook of cooks) {
       const cookReviews = insertedReviews.filter(
-        review => review.cookId.toString() === cook._id.toString()
+        review => (review.cookId as any).toString() === (cook._id as any).toString()
       );
 
       if (cookReviews.length > 0) {

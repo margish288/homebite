@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
-import Order from '@/models/Order';
-import { Types } from 'mongoose';
+import { Model, Types } from 'mongoose';
+import OrderModel, { IOrder } from '@/models/Order';
+
+const Order = OrderModel as Model<IOrder>;
 
 export async function GET(
   request: NextRequest,

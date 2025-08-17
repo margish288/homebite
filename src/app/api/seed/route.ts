@@ -1,8 +1,13 @@
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
-import User from '@/models/User';
-import CookProfile from '@/models/CookProfile';
-import MenuItem from '@/models/MenuItem';
+import { Model } from 'mongoose';
+import UserModel, { IUser } from '@/models/User';
+import CookProfileModel, { ICookProfile } from '@/models/CookProfile';
+import MenuItemModel, { IMenuItem } from '@/models/MenuItem';
+
+const User = UserModel as Model<IUser>;
+const CookProfile = CookProfileModel as Model<ICookProfile>;
+const MenuItem = MenuItemModel as Model<IMenuItem>;
 
 const sampleUsers = [
   {

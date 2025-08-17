@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
-import MenuItem from '@/models/MenuItem';
-import CookProfile from '@/models/CookProfile';
-import { Types } from 'mongoose';
+import { Model, Types } from 'mongoose';
+import MenuItemModel, { IMenuItem } from '@/models/MenuItem';
+import CookProfileModel, { ICookProfile } from '@/models/CookProfile';
+
+const MenuItem = MenuItemModel as Model<IMenuItem>;
+const CookProfile = CookProfileModel as Model<ICookProfile>;
 
 export async function GET(request: NextRequest) {
   try {

@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
-import CookProfile from '@/models/CookProfile';
+import { Model } from 'mongoose';
+import CookProfileModel, { ICookProfile } from '@/models/CookProfile';
+
+const CookProfile = CookProfileModel as Model<ICookProfile>;
 
 export async function GET(request: NextRequest) {
   try {

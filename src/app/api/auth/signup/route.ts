@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if user already exists
-    const existingUser = await User.findOne({ email: email.toLowerCase() });
+    const existingUser = await User.findOne({ email: email.toLowerCase() }) as any;
     if (existingUser) {
       return NextResponse.json(
         { success: false, error: 'User with this email already exists' },

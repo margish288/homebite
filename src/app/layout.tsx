@@ -3,6 +3,8 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SessionProvider from "@/components/SessionProvider";
+import { CartProvider } from "@/contexts/CartContext";
+import CartSidebar from "@/components/CartSidebar";
 
 export const metadata: Metadata = {
   title: "HomeBite - Food Delivery App",
@@ -18,11 +20,14 @@ export default function RootLayout({
     <html lang="en" className="h-full">
       <body className="h-full antialiased flex flex-col">
         <SessionProvider>
-          <Navbar />
-          <main className="flex-1">
-            {children}
-          </main>
-          <Footer />
+          <CartProvider>
+            <Navbar />
+            <main className="flex-1">
+              {children}
+            </main>
+            <Footer />
+            <CartSidebar />
+          </CartProvider>
         </SessionProvider>
       </body>
     </html>

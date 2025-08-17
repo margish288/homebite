@@ -26,7 +26,7 @@ export default function CookOrders() {
   useEffect(() => {
     if (status === 'loading') return;
     
-    if (!session || session.user.role !== 'cook') {
+    if (!session || (session.user as any)?.role !== 'cook') {
       router.push('/cook/auth/login');
       return;
     }
@@ -139,7 +139,7 @@ export default function CookOrders() {
     );
   }
 
-  if (!session || session.user.role !== 'cook') {
+  if (!session || (session.user as any)?.role !== 'cook') {
     return null;
   }
 

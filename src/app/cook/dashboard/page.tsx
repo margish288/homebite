@@ -26,7 +26,7 @@ export default function CookDashboard() {
   useEffect(() => {
     if (status === 'loading') return;
     
-    if (!session || session.user.role !== 'cook') {
+    if (!session || (session.user as any)?.role !== 'cook') {
       router.push('/cook/auth/login');
       return;
     }
@@ -54,7 +54,7 @@ export default function CookDashboard() {
     );
   }
 
-  if (!session || session.user.role !== 'cook') {
+  if (!session || (session.user as any)?.role !== 'cook') {
     return null;
   }
 
@@ -64,7 +64,7 @@ export default function CookDashboard() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-ink mb-2">
-            Welcome back, {session.user.name}! 👋
+            Welcome back, {(session.user as any)?.name}! 👋
           </h1>
           <p className="text-ink-light">
             Manage your cooking business and track your performance

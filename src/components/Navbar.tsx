@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 import Link from 'next/link';
+import CartButton from './CartButton';
 
 export default function Navbar() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -55,9 +56,14 @@ export default function Navbar() {
               Discover
             </Link>
             
+            {/* Cart Button - Only show for customers */}
+            {session && (session.user as any).role === 'user' && (
+              <CartButton />
+            )}
+            
             {session ? (
               <>
-                {session.user.role === 'cook' && (
+                {(session.user as any).role === 'cook' && (
                   <Link href="/cook/dashboard" className="text-ink-light dark:text-dark-text-muted hover:text-primary-500 font-medium transition-colors">
                     Dashboard
                   </Link>
@@ -70,9 +76,9 @@ export default function Navbar() {
                     className="flex items-center space-x-2 text-ink dark:text-dark-text hover:text-primary-500 font-medium transition-colors"
                   >
                     <div className="w-8 h-8 bg-primary-400 rounded-full flex items-center justify-center text-sm font-semibold text-ink">
-                      {session.user.name?.charAt(0).toUpperCase()}
+                      {(session.user as any).name?.charAt(0).toUpperCase()}
                     </div>
-                    <span>{session.user.name}</span>
+                    <span>{(session.user as any).name}</span>
                     <svg className={`w-4 h-4 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </svg>
@@ -81,13 +87,13 @@ export default function Navbar() {
                   {isDropdownOpen && (
                     <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-dark-surface rounded-xl shadow-soft-lg border border-gray-200 dark:border-gray-700 py-2 z-50">
                       <Link 
-                        href={session.user.role === 'cook' ? '/cook/profile' : '/profile'}
+                        href={(session.user as any)?.role === 'cook' ? '/cook/profile' : '/profile'}
                         className="block px-4 py-2 text-sm text-ink dark:text-dark-text hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                         onClick={() => setIsDropdownOpen(false)}
                       >
                         👤 Profile
                       </Link>
-                      {session.user.role === 'user' && (
+                      {(session.user as any)?.role === 'user' && (
                         <Link 
                           href="/orders"
                           className="block px-4 py-2 text-sm text-ink dark:text-dark-text hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
@@ -96,7 +102,7 @@ export default function Navbar() {
                           📦 My Orders
                         </Link>
                       )}
-                      {session.user.role === 'cook' && (
+                      {(session.user as any)?.role === 'cook' && (
                         <>
                           <Link 
                             href="/cook/orders"

@@ -1,7 +1,7 @@
 import { IReview } from '@/models/Review';
 
 interface ReviewsListProps {
-  reviews: IReview[];
+  reviews?: IReview[];
 }
 
 export default function ReviewsList({ reviews }: ReviewsListProps) {
@@ -37,7 +37,7 @@ export default function ReviewsList({ reviews }: ReviewsListProps) {
       .join('');
   };
 
-  if (reviews.length === 0) {
+  if (!reviews || reviews.length === 0) {
     return (
       <div className="text-center py-8">
         <div className="text-4xl mb-3">💭</div>
@@ -49,9 +49,9 @@ export default function ReviewsList({ reviews }: ReviewsListProps) {
 
   return (
     <div className="space-y-6">
-      {reviews.map((review) => (
+      {reviews.map((review, index) => (
         <div
-          key={review._id}
+          key={index}
           className="border-b border-gray-200 last:border-b-0 pb-6 last:pb-0"
         >
           <div className="flex items-start gap-4">
@@ -71,7 +71,7 @@ export default function ReviewsList({ reviews }: ReviewsListProps) {
                       {renderStars(review.rating)}
                     </div>
                     <span className="text-sm text-ink-light">
-                      {formatDate(review.createdAt)}
+                      {formatDate(review.createdAt.toISOString())}
                     </span>
                   </div>
                 </div>
@@ -95,7 +95,7 @@ export default function ReviewsList({ reviews }: ReviewsListProps) {
       ))}
 
       {/* Load More Reviews */}
-      {reviews.length >= 10 && (
+      {reviews && reviews.length >= 10 && (
         <div className="text-center pt-4">
           <button className="btn-outline">
             Load More Reviews

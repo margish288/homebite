@@ -4,21 +4,30 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import ReviewForm from "@/components/ReviewForm";
 import ReviewsList from "@/components/ReviewsList";
-import { ICook } from "@/models/Cook";
+import { ICookProfile } from "@/models/CookProfile";
 import { IReview } from "@/models/Review";
+import MenuList from "@/components/MenuList";
 
-interface CookWithReviews extends ICook {
-  averageRating: number;
-  reviewCount: number;
-  reviews: IReview[];
-}
+type PopulatedCookProfile = ICookProfile & {
+  userId: {
+    _id: string;
+    name: string;
+    email: string;
+    profileImage?: string;
+  };
+};
+
+// Remove the extended interface since we'll fetch reviews separately
+type CookProfileData = PopulatedCookProfile;
 
 export default function CookDetailPage() {
   const params = useParams();
   const id = params.id as string;
 
-  const [cook, setCook] = useState<CookWithReviews | null>(null);
+  const [cook, setCook] = useState<CookProfileData | null>(null);
+  const [reviews, setReviews] = useState<IReview[]>([]);
   const [loading, setLoading] = useState(true);
+  const [reviewsLoading, setReviewsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showReviewForm, setShowReviewForm] = useState(false);
 
@@ -27,6 +36,12 @@ export default function CookDetailPage() {
       fetchCook();
     }
   }, [id]);
+
+  useEffect(() => {
+    if (cook) {
+      fetchReviews();
+    }
+  }, [cook]);
 
   const fetchCook = async () => {
     try {
@@ -49,9 +64,27 @@ export default function CookDetailPage() {
     }
   };
 
+  const fetchReviews = async () => {
+    try {
+      setReviewsLoading(true);
+      const response = await fetch(`/api/reviews?cookId=${cook?._id}`);
+      const data = await response.json();
+
+      if (data.success) {
+        setReviews(data.data);
+      } else {
+        console.error("Failed to fetch reviews:", data.error);
+      }
+    } catch (err) {
+      console.error("Error fetching reviews:", err);
+    } finally {
+      setReviewsLoading(false);
+    }
+  };
+
   const handleReviewAdded = () => {
     setShowReviewForm(false);
-    fetchCook(); // Refresh data to show new review
+    fetchReviews(); // Refresh reviews to show new review
   };
 
   const renderStars = (rating: number) => {
@@ -92,7 +125,7 @@ export default function CookDetailPage() {
       <div className='min-h-screen flex items-center justify-center'>
         <div className='text-center'>
           <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500 mx-auto mb-4'></div>
-          <p className='text-ink-light'>Loading restaurant details...</p>
+          <p className='text-ink-light'>Loading cook details...</p>
         </div>
       </div>
     );
@@ -120,8 +153,8 @@ export default function CookDetailPage() {
       {/* Hero Section */}
       <div className='relative h-96 overflow-hidden'>
         <img
-          src={cook.image}
-          alt={cook.name}
+          src={cook.userId.profileImage || '/placeholder-cook.jpg'}
+          alt={cook.businessName}
           className='w-full h-full object-cover'
         />
         <div className='absolute inset-0 bg-black/50'></div>
@@ -132,25 +165,29 @@ export default function CookDetailPage() {
             <div className='flex items-end justify-between'>
               <div>
                 <h1 className='text-3xl md:text-4xl font-bold mb-2'>
-                  {cook.name}
+                  {cook.businessName}
                 </h1>
+                <p className='text-lg text-gray-200 mb-2'>👨‍🍳 {cook.userId.name}</p>
                 <p className='text-lg text-gray-200 mb-2'>📍 {cook.location}</p>
                 <div className='flex items-center gap-4 text-sm'>
                   <div className='flex items-center gap-1'>
-                    {renderStars(cook.averageRating)}
+                    {renderStars(cook.rating)}
                     <span className='ml-1 font-medium'>
-                      {cook.averageRating}
+                      {cook.rating}
                     </span>
-                    <span className='text-gray-300'>
-                      ({cook.reviewCount} reviews)
-                    </span>
+                                      <span className='text-gray-300'>
+                    ({reviews.length} reviews)
+                  </span>
                   </div>
                   <span className='bg-white/20 px-2 py-1 rounded'>
                     {cook.priceRange}
                   </span>
-                  {cook.category === "home-meals" && (
-                    <span className='bg-primary-400 text-ink px-2 py-1 rounded'>
-                      🕒 {cook.deliveryTime}
+                  <span className='bg-primary-400 text-ink px-2 py-1 rounded'>
+                    🕒 {cook.deliveryTime}
+                  </span>
+                  {cook.verifiedBadge && (
+                    <span className='bg-green-500 text-white px-2 py-1 rounded text-xs'>
+                      ✓ Verified
                     </span>
                   )}
                 </div>
@@ -191,11 +228,34 @@ export default function CookDetailPage() {
               </div>
             </div>
 
+            {/* Specialties */}
+            {cook.specialties && cook.specialties.length > 0 && (
+              <div className='bg-white rounded-xl p-6 shadow-soft'>
+                <h2 className='text-2xl font-bold text-ink mb-4'>Specialties</h2>
+                <div className='flex flex-wrap gap-2'>
+                  {cook.specialties.map((specialty) => (
+                    <span key={specialty} className='bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-sm font-medium'>
+                      {specialty}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Menu */}
+            <div className='bg-white rounded-xl p-6 shadow-soft'>
+              <h2 className='text-2xl font-bold text-ink mb-4'>Menu</h2>
+              <MenuList
+                cookProfileId={cook._id?.toString() || ''}
+                showActions={false}
+              />
+            </div>
+
             {/* Reviews Section */}
             <div className='bg-white rounded-xl p-6 shadow-soft'>
               <div className='flex items-center justify-between mb-6'>
                 <h2 className='text-2xl font-bold text-ink'>
-                  Reviews ({cook.reviewCount})
+                  Reviews ({reviews.length})
                 </h2>
                 <button
                   onClick={() => setShowReviewForm(true)}
@@ -209,7 +269,7 @@ export default function CookDetailPage() {
               {showReviewForm && (
                 <div className='mb-6'>
                   <ReviewForm
-                    cookId={cook._id.toString()}
+                    cookId={cook._id?.toString() || cook.userId._id}
                     onReviewAdded={handleReviewAdded}
                     onCancel={() => setShowReviewForm(false)}
                   />
@@ -217,7 +277,14 @@ export default function CookDetailPage() {
               )}
 
               {/* Reviews List */}
-              <ReviewsList reviews={cook.reviews} />
+              {reviewsLoading ? (
+                <div className="text-center py-4">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500 mx-auto"></div>
+                  <p className="text-ink-light mt-2">Loading reviews...</p>
+                </div>
+              ) : (
+                <ReviewsList reviews={reviews} />
+              )}
             </div>
           </div>
 
@@ -227,22 +294,10 @@ export default function CookDetailPage() {
             <div className='bg-white rounded-xl p-6 shadow-soft'>
               <div className='text-center space-y-4'>
                 <div className='text-2xl font-bold text-primary-500'>
-                  {cook.category === "home-meals"
-                    ? "🚚"
-                    : cook.category === "specialty-dishes"
-                    ? "⭐"
-                    : cook.category === "baked-goods"
-                    ? "🧁"
-                    : "🥗"}
+                  🍽️
                 </div>
                 <h3 className='text-lg font-semibold text-ink'>
-                  {cook.category === "home-meals"
-                    ? "Order Home Meals"
-                    : cook.category === "specialty-dishes"
-                    ? "Order Specialties"
-                    : cook.category === "baked-goods"
-                    ? "Order Baked Goods"
-                    : "Order Healthy Options"}
+                  Order from {cook.businessName}
                 </h3>
                 <button className='w-full btn-primary py-3'>Order Now</button>
               </div>
@@ -253,24 +308,54 @@ export default function CookDetailPage() {
               <h3 className='text-lg font-semibold text-ink mb-4'>Cook Info</h3>
               <div className='space-y-3 text-sm'>
                 <div className='flex justify-between'>
-                  <span className='text-ink-light'>Category:</span>
-                  <span className='text-ink capitalize'>
-                    {cook.category.replace("-", " ")}
-                  </span>
+                  <span className='text-ink-light'>Cook Name:</span>
+                  <span className='text-ink'>{cook.userId.name}</span>
                 </div>
                 <div className='flex justify-between'>
                   <span className='text-ink-light'>Price Range:</span>
                   <span className='text-ink'>{cook.priceRange}</span>
                 </div>
-                {cook.category === "home-meals" && (
-                  <div className='flex justify-between'>
-                    <span className='text-ink-light'>Delivery Time:</span>
-                    <span className='text-ink'>{cook.deliveryTime}</span>
-                  </div>
-                )}
                 <div className='flex justify-between'>
-                  <span className='text-ink-light'>Average Rating:</span>
-                  <span className='text-ink'>{cook.averageRating}/5</span>
+                  <span className='text-ink-light'>Delivery Time:</span>
+                  <span className='text-ink'>{cook.deliveryTime}</span>
+                </div>
+                <div className='flex justify-between'>
+                  <span className='text-ink-light'>Rating:</span>
+                  <span className='text-ink'>{cook.rating}/5</span>
+                </div>
+                <div className='flex justify-between'>
+                  <span className='text-ink-light'>Total Orders:</span>
+                  <span className='text-ink'>{cook.totalOrders}</span>
+                </div>
+                <div className='flex justify-between'>
+                  <span className='text-ink-light'>Verification:</span>
+                  <span className='text-ink'>
+                    {cook.verifiedBadge ? (
+                      <span className='text-green-600'>✓ Verified</span>
+                    ) : (
+                      <span className='text-gray-500'>Pending</span>
+                    )}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Availability */}
+            <div className='bg-white rounded-xl p-6 shadow-soft'>
+              <h3 className='text-lg font-semibold text-ink mb-4'>Availability</h3>
+              <div className='space-y-2 text-sm'>
+                <div className='flex justify-between'>
+                  <span className='text-ink-light'>Days:</span>
+                  <span className='text-ink capitalize'>
+                    {cook.availability.days.slice(0, 3).join(', ')}
+                    {cook.availability.days.length > 3 && ` +${cook.availability.days.length - 3} more`}
+                  </span>
+                </div>
+                <div className='flex justify-between'>
+                  <span className='text-ink-light'>Hours:</span>
+                  <span className='text-ink'>
+                    {cook.availability.hours.start} - {cook.availability.hours.end}
+                  </span>
                 </div>
               </div>
             </div>

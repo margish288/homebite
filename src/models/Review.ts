@@ -25,7 +25,7 @@ const ReviewSchema = new Schema<IReview>(
     },
     cookId: {
       type: Schema.Types.ObjectId,
-      ref: 'Cook',
+      ref: 'CookProfile',
       required: [true, 'Cook ID is required'],
     },
     rating: {

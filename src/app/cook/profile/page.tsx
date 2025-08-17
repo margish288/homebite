@@ -3,6 +3,9 @@
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import AddMenuItemForm from '@/components/AddMenuItemForm';
+import MenuList from '@/components/MenuList';
+import { IMenuItem } from '@/models/MenuItem';
 
 interface CookProfileData {
   // User basic info
@@ -59,11 +62,14 @@ export default function CookProfile() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [activeTab, setActiveTab] = useState('basic');
+  const [showAddMenuForm, setShowAddMenuForm] = useState(false);
+  const [menuRefreshTrigger, setMenuRefreshTrigger] = useState(0);
+  const [cookProfileId, setCookProfileId] = useState<string>('');
 
   useEffect(() => {
     if (status === 'loading') return;
     
-    if (!session || session.user.role !== 'cook') {
+    if (!session || (session.user as any)?.role !== 'cook') {
       router.push('/cook/auth/login');
       return;
     }
@@ -74,11 +80,15 @@ export default function CookProfile() {
 
   const loadProfileData = async () => {
     try {
-      // Simulate loading profile data
+      // For now, simulate loading profile data and use a mock cookProfileId
+      // In real implementation, this would fetch the actual cook profile
+      const mockCookProfileId = '672a1234567890abcdef1234'; // This should come from API
+      setCookProfileId(mockCookProfileId);
+      
       setTimeout(() => {
         setProfileData({
-          name: session?.user.name || '',
-          email: session?.user.email || '',
+          name: (session?.user as any)?.name || '',
+          email: (session?.user as any)?.email || '',
           phone: '+91 9876543210',
           profileImage: '',
           businessName: "Priya's Kitchen",
@@ -117,6 +127,16 @@ export default function CookProfile() {
     }
   };
 
+  const handleMenuItemAdded = (menuItem: IMenuItem) => {
+    setShowAddMenuForm(false);
+    setMenuRefreshTrigger(prev => prev + 1);
+  };
+
+  const handleMenuItemEdit = (menuItem: IMenuItem) => {
+    // For now, just show an alert. You can implement edit functionality later
+    alert(`Edit functionality for "${menuItem.name}" coming soon!`);
+  };
+
   if (status === 'loading' || isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -128,7 +148,7 @@ export default function CookProfile() {
     );
   }
 
-  if (!session || session.user.role !== 'cook') {
+  if (!session || (session.user as any)?.role !== 'cook') {
     return null;
   }
 
@@ -358,74 +378,113 @@ export default function CookProfile() {
             {/* Menu & Pricing Tab */}
             {activeTab === 'menu' && (
               <div className="space-y-6">
-                <h2 className="text-xl font-semibold text-ink mb-4">Menu & Specialties</h2>
-                
-                <div>
-                  <label className="block text-sm font-medium text-ink mb-2">Cuisine Types</label>
-                  <div className="flex flex-wrap gap-2 mb-3">
-                    {profileData.cuisine.map((item, index) => (
-                      <span key={index} className="bg-primary-100 text-primary-800 px-3 py-1 rounded-full text-sm flex items-center gap-2">
-                        {item}
-                        <button
-                          onClick={() => {
-                            const newCuisine = profileData.cuisine.filter((_, i) => i !== index);
-                            setProfileData({...profileData, cuisine: newCuisine});
-                          }}
-                          className="text-primary-600 hover:text-primary-800"
-                        >
-                          ×
-                        </button>
-                      </span>
-                    ))}
-                  </div>
-                  <input
-                    type="text"
-                    placeholder="Add cuisine type and press Enter"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent"
-                    onKeyPress={(e) => {
-                      if (e.key === 'Enter') {
-                        const value = e.currentTarget.value.trim();
-                        if (value && !profileData.cuisine.includes(value)) {
-                          setProfileData({...profileData, cuisine: [...profileData.cuisine, value]});
-                          e.currentTarget.value = '';
-                        }
-                      }
-                    }}
-                  />
+                <div className="flex items-center justify-between">
+                  <h2 className="text-xl font-semibold text-ink">Menu Management</h2>
+                  <button
+                    onClick={() => setShowAddMenuForm(!showAddMenuForm)}
+                    className="btn-primary px-4 py-2"
+                  >
+                    {showAddMenuForm ? 'Cancel' : '+ Add Menu Item'}
+                  </button>
                 </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-ink mb-2">Signature Dishes</label>
-                  <div className="flex flex-wrap gap-2 mb-3">
-                    {profileData.specialties.map((item, index) => (
-                      <span key={index} className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm flex items-center gap-2">
-                        {item}
-                        <button
-                          onClick={() => {
-                            const newSpecialties = profileData.specialties.filter((_, i) => i !== index);
-                            setProfileData({...profileData, specialties: newSpecialties});
-                          }}
-                          className="text-green-600 hover:text-green-800"
-                        >
-                          ×
-                        </button>
-                      </span>
-                    ))}
-                  </div>
-                  <input
-                    type="text"
-                    placeholder="Add specialty dish and press Enter"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent"
-                    onKeyPress={(e) => {
-                      if (e.key === 'Enter') {
-                        const value = e.currentTarget.value.trim();
-                        if (value && !profileData.specialties.includes(value)) {
-                          setProfileData({...profileData, specialties: [...profileData.specialties, value]});
-                          e.currentTarget.value = '';
-                        }
-                      }
-                    }}
+
+                {/* Add Menu Item Form */}
+                {showAddMenuForm && cookProfileId && (
+                  <AddMenuItemForm
+                    cookProfileId={cookProfileId}
+                    onMenuItemAdded={handleMenuItemAdded}
+                    onCancel={() => setShowAddMenuForm(false)}
                   />
+                )}
+
+                {/* Menu Items List */}
+                {cookProfileId && (
+                  <MenuList
+                    cookProfileId={cookProfileId}
+                    showActions={true}
+                    onEdit={handleMenuItemEdit}
+                    refreshTrigger={menuRefreshTrigger}
+                  />
+                )}
+
+                {/* Cuisine Types & Specialties - Moved to a collapsed section */}
+                <div className="border-t pt-6">
+                  <details className="group">
+                    <summary className="cursor-pointer text-lg font-medium text-ink mb-4 flex items-center">
+                      <span>Cuisine Types & Specialties</span>
+                      <span className="ml-2 transform group-open:rotate-90 transition-transform">▶</span>
+                    </summary>
+                    
+                    <div className="space-y-4 pl-4">
+                      <div>
+                        <label className="block text-sm font-medium text-ink mb-2">Cuisine Types</label>
+                        <div className="flex flex-wrap gap-2 mb-3">
+                          {profileData.cuisine.map((item, index) => (
+                            <span key={index} className="bg-primary-100 text-primary-800 px-3 py-1 rounded-full text-sm flex items-center gap-2">
+                              {item}
+                              <button
+                                onClick={() => {
+                                  const newCuisine = profileData.cuisine.filter((_, i) => i !== index);
+                                  setProfileData({...profileData, cuisine: newCuisine});
+                                }}
+                                className="text-primary-600 hover:text-primary-800"
+                              >
+                                ×
+                              </button>
+                            </span>
+                          ))}
+                        </div>
+                        <input
+                          type="text"
+                          placeholder="Add cuisine type and press Enter"
+                          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent"
+                          onKeyPress={(e) => {
+                            if (e.key === 'Enter') {
+                              const value = e.currentTarget.value.trim();
+                              if (value && !profileData.cuisine.includes(value)) {
+                                setProfileData({...profileData, cuisine: [...profileData.cuisine, value]});
+                                e.currentTarget.value = '';
+                              }
+                            }
+                          }}
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-ink mb-2">Signature Dishes</label>
+                        <div className="flex flex-wrap gap-2 mb-3">
+                          {profileData.specialties.map((item, index) => (
+                            <span key={index} className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm flex items-center gap-2">
+                              {item}
+                              <button
+                                onClick={() => {
+                                  const newSpecialties = profileData.specialties.filter((_, i) => i !== index);
+                                  setProfileData({...profileData, specialties: newSpecialties});
+                                }}
+                                className="text-green-600 hover:text-green-800"
+                              >
+                                ×
+                              </button>
+                            </span>
+                          ))}
+                        </div>
+                        <input
+                          type="text"
+                          placeholder="Add specialty dish and press Enter"
+                          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent"
+                          onKeyPress={(e) => {
+                            if (e.key === 'Enter') {
+                              const value = e.currentTarget.value.trim();
+                              if (value && !profileData.specialties.includes(value)) {
+                                setProfileData({...profileData, specialties: [...profileData.specialties, value]});
+                                e.currentTarget.value = '';
+                              }
+                            }
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </details>
                 </div>
               </div>
             )}

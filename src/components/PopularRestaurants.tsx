@@ -2,7 +2,16 @@
 
 import { useEffect, useState } from 'react';
 import CookCard from '@/components/RestaurantCard';
-import { ICook } from '@/models/Cook';
+import { ICookProfile } from '@/models/CookProfile';
+
+type PopulatedCookProfile = ICookProfile & {
+  userId: {
+    _id: string;
+    name: string;
+    email: string;
+    profileImage?: string;
+  };
+};
 
 interface PopularCooksProps {
   searchQuery?: string;
@@ -10,7 +19,7 @@ interface PopularCooksProps {
 }
 
 export default function PopularCooks({ searchQuery, selectedCategory }: PopularCooksProps) {
-  const [cooks, setCooks] = useState<ICook[]>([]);
+  const [cooks, setCooks] = useState<PopulatedCookProfile[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -83,7 +92,7 @@ export default function PopularCooks({ searchQuery, selectedCategory }: PopularC
         <div className="container max-w-6xl mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-ink mb-4">
-              Loading Restaurants...
+              Loading Cooks...
             </h2>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -132,8 +141,8 @@ export default function PopularCooks({ searchQuery, selectedCategory }: PopularC
           </div>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {cooks.map((cook) => (
-              <CookCard key={cook._id} cook={cook} />
+            {cooks.map((cookProfile) => (
+              <CookCard key={cookProfile._id?.toString()} cookProfile={cookProfile} />
             ))}
           </div>
         )}
@@ -142,7 +151,7 @@ export default function PopularCooks({ searchQuery, selectedCategory }: PopularC
         {cooks.length >= 6 && (
           <div className="text-center mt-12">
             <button className="btn-outline px-8 py-3">
-              Load More Restaurants
+              Load More Cooks
             </button>
           </div>
         )}

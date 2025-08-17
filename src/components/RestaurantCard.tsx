@@ -1,11 +1,20 @@
 import Link from 'next/link';
-import { ICook } from '@/models/Cook';
+import { ICookProfile } from '@/models/CookProfile';
+
+type PopulatedCookProfile = ICookProfile & {
+  userId: {
+    _id: string;
+    name: string;
+    email: string;
+    profileImage?: string;
+  };
+};
 
 interface CookCardProps {
-  cook: ICook;
+  cookProfile: PopulatedCookProfile;
 }
 
-export default function CookCard({ cook }: CookCardProps) {
+export default function CookCard({ cookProfile }: CookCardProps) {
   const renderStars = (rating: number) => {
     const stars = [];
     const fullStars = Math.floor(rating);
@@ -34,51 +43,59 @@ export default function CookCard({ cook }: CookCardProps) {
   };
 
   return (
-    <Link href={`/cook/${cook._id}`}>
+    <Link href={`/cook/${cookProfile.userId._id}`}>
       <div className="bg-white rounded-xl overflow-hidden shadow-soft hover:shadow-soft-lg transition-all duration-300 group cursor-pointer">
       {/* Image */}
       <div className="relative h-48 overflow-hidden">
         <img
-          src={cook.image}
-          alt={cook.name}
+          src={cookProfile.userId.profileImage || '/placeholder-cook.jpg'}
+          alt={cookProfile.userId.name}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />
         
         {/* Featured Badge */}
-        {cook.featured && (
+        {cookProfile.featured && (
           <div className="absolute top-3 left-3 bg-primary-400 text-ink px-2 py-1 rounded-full text-xs font-medium">
             Featured
           </div>
         )}
 
+        {/* Verified Badge */}
+        {cookProfile.verifiedBadge && (
+          <div className={`absolute top-3 ${cookProfile.featured ? 'left-20' : 'left-3'} bg-green-500 text-white px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1`}>
+            ✓ Verified
+          </div>
+        )}
+
         {/* Price Range */}
         <div className="absolute top-3 right-3 bg-black/70 text-white px-2 py-1 rounded-full text-xs font-medium">
-          {cook.priceRange}
+          {cookProfile.priceRange}
         </div>
 
         {/* Delivery Time */}
-        {cook.category === 'delivery' && (
-          <div className="absolute bottom-3 left-3 bg-white/90 text-ink px-2 py-1 rounded-full text-xs font-medium">
-            🕒 {cook.deliveryTime}
-          </div>
-        )}
+        <div className="absolute bottom-3 left-3 bg-white/90 text-ink px-2 py-1 rounded-full text-xs font-medium">
+          🕒 {cookProfile.deliveryTime}
+        </div>
       </div>
 
       {/* Content */}
       <div className="p-4">
-        {/* Restaurant Name & Location */}
+        {/* Cook Name & Business Name */}
         <div className="mb-2">
           <h3 className="text-lg font-semibold text-ink mb-1 line-clamp-1">
-            {cook.name}
+            {cookProfile.businessName}
           </h3>
           <p className="text-sm text-ink-light line-clamp-1">
-            📍 {cook.location}
+            👨‍🍳 {cookProfile.userId.name}
+          </p>
+          <p className="text-sm text-ink-light line-clamp-1">
+            📍 {cookProfile.location}
           </p>
         </div>
 
         {/* Cuisine Tags */}
         <div className="flex flex-wrap gap-1 mb-3">
-          {cook.cuisine.slice(0, 3).map((cuisine) => (
+          {cookProfile.cuisine.slice(0, 3).map((cuisine) => (
             <span
               key={cuisine}
               className="chip text-xs"
@@ -86,33 +103,54 @@ export default function CookCard({ cook }: CookCardProps) {
               {cuisine}
             </span>
           ))}
-          {cook.cuisine.length > 3 && (
+          {cookProfile.cuisine.length > 3 && (
             <span className="chip text-xs">
-              +{cook.cuisine.length - 3} more
+              +{cookProfile.cuisine.length - 3} more
             </span>
           )}
         </div>
+
+        {/* Specialties */}
+        {cookProfile.specialties && cookProfile.specialties.length > 0 && (
+          <div className="flex flex-wrap gap-1 mb-3">
+            <span className="text-xs font-medium text-ink-light">Specialties:</span>
+            {cookProfile.specialties.slice(0, 2).map((specialty) => (
+              <span
+                key={specialty}
+                className="bg-orange-100 text-orange-700 px-2 py-1 rounded-full text-xs"
+              >
+                {specialty}
+              </span>
+            ))}
+            {cookProfile.specialties.length > 2 && (
+              <span className="bg-orange-100 text-orange-700 px-2 py-1 rounded-full text-xs">
+                +{cookProfile.specialties.length - 2} more
+              </span>
+            )}
+          </div>
+        )}
 
         {/* Rating & Description */}
         <div className="mb-4">
           <div className="flex items-center gap-2 mb-2">
             <div className="flex items-center">
-              {renderStars(cook.rating)}
+              {renderStars(cookProfile.rating)}
             </div>
             <span className="text-sm font-medium text-ink">
-              {cook.rating}
+              {cookProfile.rating}
+            </span>
+            <span className="text-xs text-ink-light">
+              ({cookProfile.totalOrders} orders)
             </span>
           </div>
           <p className="text-sm text-ink-light line-clamp-2">
-            {cook.description}
+            {cookProfile.description}
           </p>
         </div>
 
         {/* Action Button */}
         <button className="w-full btn-primary py-2.5 text-sm font-medium">
-          {cook.category === 'delivery' ? 'Order Now' : 
-           cook.category === 'dining' ? 'Book Table' : 
-           'View Details'}
+          Order Now
         </button>
       </div>
     </div>

@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
-import connectDB from '@/lib/mongodb';
-import CookProfile from '@/models/CookProfile';
-import User from '@/models/User';
+import { NextRequest, NextResponse } from "next/server";
+import connectDB from "@/lib/mongodb";
+import CookProfile from "@/models/CookProfile";
+import User from "@/models/User";
 
 export async function POST(request: NextRequest) {
   try {
@@ -21,9 +21,18 @@ export async function POST(request: NextRequest) {
     } = body;
 
     // Validate required fields
-    if (!userId || !businessName || !description || !cuisine || !location || !priceRange || !deliveryTime || !availability) {
+    if (
+      !userId ||
+      !businessName ||
+      !description ||
+      !cuisine ||
+      !location ||
+      !priceRange ||
+      !deliveryTime ||
+      !availability
+    ) {
       return NextResponse.json(
-        { success: false, error: 'Missing required fields' },
+        { success: false, error: "Missing required fields" },
         { status: 400 }
       );
     }
@@ -32,14 +41,14 @@ export async function POST(request: NextRequest) {
     const user = await User.findById(userId);
     if (!user) {
       return NextResponse.json(
-        { success: false, error: 'User not found' },
+        { success: false, error: "User not found" },
         { status: 404 }
       );
     }
 
-    if (user.role !== 'cook') {
+    if (user.role !== "cook") {
       return NextResponse.json(
-        { success: false, error: 'User is not registered as a cook' },
+        { success: false, error: "User is not registered as a cook" },
         { status: 403 }
       );
     }
@@ -48,7 +57,7 @@ export async function POST(request: NextRequest) {
     const existingProfile = await CookProfile.findOne({ userId });
     if (existingProfile) {
       return NextResponse.json(
-        { success: false, error: 'Cook profile already exists' },
+        { success: false, error: "Cook profile already exists" },
         { status: 409 }
       );
     }
@@ -64,7 +73,7 @@ export async function POST(request: NextRequest) {
       priceRange,
       deliveryTime,
       availability,
-      verificationStatus: 'pending',
+      verificationStatus: "pending",
       verifiedBadge: false,
       kycDetails: {
         verified: false,
@@ -90,24 +99,27 @@ export async function POST(request: NextRequest) {
       featured: false,
     });
 
-    return NextResponse.json({
-      success: true,
-      message: 'Cook profile created successfully',
-      data: cookProfile,
-    }, { status: 201 });
+    return NextResponse.json(
+      {
+        success: true,
+        message: "Cook profile created successfully",
+        data: cookProfile,
+      },
+      { status: 201 }
+    );
   } catch (error) {
-    console.error('Error creating cook profile:', error);
-    
+    console.error("Error creating cook profile:", error);
+
     // Handle duplicate key error
     if ((error as any).code === 11000) {
       return NextResponse.json(
-        { success: false, error: 'Cook profile already exists' },
+        { success: false, error: "Cook profile already exists" },
         { status: 409 }
       );
     }
 
     return NextResponse.json(
-      { success: false, error: 'Failed to create cook profile' },
+      { success: false, error: "Failed to create cook profile" },
       { status: 500 }
     );
   }
@@ -118,20 +130,22 @@ export async function GET(request: NextRequest) {
     await connectDB();
 
     const { searchParams } = new URL(request.url);
-    const userId = searchParams.get('userId');
+    const userId = searchParams.get("userId");
 
     if (!userId) {
       return NextResponse.json(
-        { success: false, error: 'User ID is required' },
+        { success: false, error: "User ID is required" },
         { status: 400 }
       );
     }
 
-    const cookProfile = await CookProfile.findOne({ userId }).populate('userId');
+    const cookProfile = await CookProfile.findOne({ userId }).populate(
+      "userId"
+    );
 
     if (!cookProfile) {
       return NextResponse.json(
-        { success: false, error: 'Cook profile not found' },
+        { success: false, error: "Cook profile not found" },
         { status: 404 }
       );
     }
@@ -141,9 +155,9 @@ export async function GET(request: NextRequest) {
       data: cookProfile,
     });
   } catch (error) {
-    console.error('Error fetching cook profile:', error);
+    console.error("Error fetching cook profile:", error);
     return NextResponse.json(
-      { success: false, error: 'Failed to fetch cook profile' },
+      { success: false, error: "Failed to fetch cook profile" },
       { status: 500 }
     );
   }

@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
-import connectDB from '@/lib/mongodb';
-import Cook from '@/models/Cook';
-import Review from '@/models/Review';
+import { NextRequest, NextResponse } from "next/server";
+import connectDB from "@/lib/mongodb";
+import Cook from "@/models/Cook";
+import Review from "@/models/Review";
 
 export async function GET(
   request: NextRequest,
@@ -15,7 +15,7 @@ export async function GET(
     // Validate ObjectId format
     if (!id.match(/^[0-9a-fA-F]{24}$/)) {
       return NextResponse.json(
-        { success: false, error: 'Invalid cook ID format' },
+        { success: false, error: "Invalid cook ID format" },
         { status: 400 }
       );
     }
@@ -25,7 +25,7 @@ export async function GET(
 
     if (!cook) {
       return NextResponse.json(
-        { success: false, error: 'Cook not found' },
+        { success: false, error: "Cook not found" },
         { status: 404 }
       );
     }
@@ -36,9 +36,11 @@ export async function GET(
       .limit(50);
 
     // Calculate average rating from reviews
-    const averageRating = reviews.length > 0 
-      ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length
-      : cook.rating;
+    const averageRating =
+      reviews.length > 0
+        ? reviews.reduce((sum, review) => sum + review.rating, 0) /
+          reviews.length
+        : cook.rating;
 
     const cookWithReviews = {
       ...cook.toObject(),
@@ -47,14 +49,14 @@ export async function GET(
       reviews,
     };
 
-    return NextResponse.json({ 
-      success: true, 
-      data: cookWithReviews 
+    return NextResponse.json({
+      success: true,
+      data: cookWithReviews,
     });
   } catch (error) {
-    console.error('Error fetching cook details:', error);
+    console.error("Error fetching cook details:", error);
     return NextResponse.json(
-      { success: false, error: 'Failed to fetch cook details' },
+      { success: false, error: "Failed to fetch cook details" },
       { status: 500 }
     );
   }

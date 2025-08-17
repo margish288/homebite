@@ -1,16 +1,16 @@
-import NextAuth from 'next-auth';
-import CredentialsProvider from 'next-auth/providers/credentials';
-import bcrypt from 'bcryptjs';
-import connectDB from '@/lib/mongodb';
-import User from '@/models/User';
+import NextAuth from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
+import bcrypt from "bcryptjs";
+import connectDB from "@/lib/mongodb";
+import User from "@/models/User";
 
 const handler = NextAuth({
   providers: [
     CredentialsProvider({
-      name: 'credentials',
+      name: "credentials",
       credentials: {
-        email: { label: 'Email', type: 'email' },
-        password: { label: 'Password', type: 'password' },
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
@@ -19,15 +19,18 @@ const handler = NextAuth({
 
         try {
           await connectDB();
-          
+
           const user = await User.findOne({ email: credentials.email });
-          
+
           if (!user) {
             return null;
           }
 
-          const isPasswordValid = await bcrypt.compare(credentials.password, user.password);
-          
+          const isPasswordValid = await bcrypt.compare(
+            credentials.password,
+            user.password
+          );
+
           if (!isPasswordValid) {
             return null;
           }
@@ -40,37 +43,43 @@ const handler = NextAuth({
             isVerified: user.isVerified,
           };
         } catch (error) {
-          console.error('Auth error:', error);
+          console.error("Auth error:", error);
           return null;
         }
       },
     }),
   ],
   session: {
-    strategy: 'jwt',
+    strategy: "jwt",
   },
   callbacks: {
     async jwt({ token, user }) {
-      if (user) {
-        token.role = user.role;
-        token.isVerified = user.isVerified;
+      try {
+        if (user) {
+          token.role = user.role;
+          token.isVerified = user.isVerified;
+        }
+        return token;
+      } catch (error) {
+        console.log(error);
+        return null;
       }
-      return token;
     },
-    async session({ session, token }) {
-      if (token) {
-        session.user.id = token.sub as string;
-        session.user.role = token.role as string;
-        session.user.isVerified = token.isVerified as boolean;
+    async session({ session, token }: any) {
+      try {
+        if (token) {
+          session.user.id = token.sub as string;
+          session.user.role = token.role as string;
+          session.user.isVerified = token.isVerified as boolean;
+        }
+        return session;
+      } catch (error) {
+        console.log(error);
+        return null;
       }
-      return session;
     },
   },
-  pages: {
-    signIn: '/auth/login',
-    signUp: '/auth/signup',
-  },
-  secret: process.env.NEXTAUTH_SECRET || 'your-secret-key',
+  secret: process.env.NEXTAUTH_SECRET || "your-secret-key",
 });
 
 export { handler as GET, handler as POST };

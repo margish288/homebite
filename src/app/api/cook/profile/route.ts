@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/mongodb";
-import CookProfile from "@/models/CookProfile";
-import User from "@/models/User";
-import { Types } from "mongoose";
+import { Model, Types } from "mongoose";
+import CookProfileModel, { ICookProfile } from "@/models/CookProfile";
+import UserModel, { IUser } from "@/models/User";
+
+const CookProfile = CookProfileModel as Model<ICookProfile>;
+const User = UserModel as Model<IUser>;
 
 export async function POST(request: NextRequest) {
   try {

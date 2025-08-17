@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import connectDB from '@/lib/mongodb';
-import User from '@/models/User';
+import { Model } from 'mongoose';
+import UserModel, { IUser } from '@/models/User';
+
+const User = UserModel as Model<IUser>;
 
 export async function POST(request: NextRequest) {
   try {

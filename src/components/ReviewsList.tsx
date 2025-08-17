@@ -1,7 +1,7 @@
 import { IReview } from '@/models/Review';
 
 interface ReviewsListProps {
-  reviews: IReview[];
+  reviews?: IReview[];
 }
 
 export default function ReviewsList({ reviews }: ReviewsListProps) {
@@ -37,7 +37,7 @@ export default function ReviewsList({ reviews }: ReviewsListProps) {
       .join('');
   };
 
-  if (reviews.length === 0) {
+  if (!reviews || reviews.length === 0) {
     return (
       <div className="text-center py-8">
         <div className="text-4xl mb-3">💭</div>
@@ -95,7 +95,7 @@ export default function ReviewsList({ reviews }: ReviewsListProps) {
       ))}
 
       {/* Load More Reviews */}
-      {reviews.length >= 10 && (
+      {reviews && reviews.length >= 10 && (
         <div className="text-center pt-4">
           <button className="btn-outline">
             Load More Reviews

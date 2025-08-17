@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/mongodb";
 import CookProfile from "@/models/CookProfile";
 import User from "@/models/User";
+import { Types } from "mongoose";
 
 export async function POST(request: NextRequest) {
   try {
@@ -135,6 +136,14 @@ export async function GET(request: NextRequest) {
     if (!userId) {
       return NextResponse.json(
         { success: false, error: "User ID is required" },
+        { status: 400 }
+      );
+    }
+
+    // Validate if userId is a valid MongoDB ObjectId
+    if (!Types.ObjectId.isValid(userId)) {
+      return NextResponse.json(
+        { success: false, error: "Invalid user ID format" },
         { status: 400 }
       );
     }

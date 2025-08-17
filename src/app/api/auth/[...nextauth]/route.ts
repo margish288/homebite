@@ -53,11 +53,11 @@ const handler = NextAuth({
     strategy: "jwt",
   },
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user }: any) {
       try {
         if (user) {
-          token.role = user.role;
-          token.isVerified = user.isVerified;
+          token.role = user?.role;
+          token.isVerified = user?.isVerified;
         }
         return token;
       } catch (error) {

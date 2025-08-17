@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Review from '@/models/Review';
-import Cook from '@/models/Cook';
+import CookProfile from '@/models/CookProfile';
 
 export async function POST(request: NextRequest) {
   try {
@@ -26,11 +26,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if cook exists
-    const cook = await Cook.findById(cookId);
-    if (!cook) {
+    // Check if cook profile exists
+    const cookProfile = await CookProfile.findById(cookId);
+    if (!cookProfile) {
       return NextResponse.json(
-        { success: false, error: 'Cook not found' },
+        { success: false, error: 'Cook profile not found' },
         { status: 404 }
       );
     }
@@ -53,11 +53,11 @@ export async function POST(request: NextRequest) {
       comment,
     });
 
-    // Update cook's average rating
+    // Update cook profile's average rating
     const allReviews = await Review.find({ cookId });
     const averageRating = allReviews.reduce((sum, r) => sum + r.rating, 0) / allReviews.length;
     
-    await Cook.findByIdAndUpdate(cookId, {
+    await CookProfile.findByIdAndUpdate(cookId, {
       rating: Math.round(averageRating * 10) / 10
     });
 
@@ -92,7 +92,7 @@ export async function GET(request: NextRequest) {
     const cookId = searchParams.get('cookId');
     const userId = searchParams.get('userId');
 
-    let query: any = {};
+    const query: Record<string, unknown> = {};
 
     if (cookId) {
       query.cookId = cookId;

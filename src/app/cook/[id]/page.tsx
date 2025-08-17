@@ -153,7 +153,7 @@ export default function CookDetailPage() {
       {/* Hero Section */}
       <div className='relative h-96 overflow-hidden'>
         <img
-          src={cook.userId.profileImage || '/placeholder-cook.jpg'}
+          src={cook.userId.profileImage || "/placeholder-cook.jpg"}
           alt={cook.businessName}
           className='w-full h-full object-cover'
         />
@@ -167,17 +167,17 @@ export default function CookDetailPage() {
                 <h1 className='text-3xl md:text-4xl font-bold mb-2'>
                   {cook.businessName}
                 </h1>
-                <p className='text-lg text-gray-200 mb-2'>👨‍🍳 {cook.userId.name}</p>
+                <p className='text-lg text-gray-200 mb-2'>
+                  👨‍🍳 {cook.userId.name}
+                </p>
                 <p className='text-lg text-gray-200 mb-2'>📍 {cook.location}</p>
                 <div className='flex items-center gap-4 text-sm'>
                   <div className='flex items-center gap-1'>
                     {renderStars(cook.rating)}
-                    <span className='ml-1 font-medium'>
-                      {cook.rating}
+                    <span className='ml-1 font-medium'>{cook.rating}</span>
+                    <span className='text-gray-300'>
+                      ({reviews.length} reviews)
                     </span>
-                                      <span className='text-gray-300'>
-                    ({reviews.length} reviews)
-                  </span>
                   </div>
                   <span className='bg-white/20 px-2 py-1 rounded'>
                     {cook.priceRange}
@@ -231,10 +231,15 @@ export default function CookDetailPage() {
             {/* Specialties */}
             {cook.specialties && cook.specialties.length > 0 && (
               <div className='bg-white rounded-xl p-6 shadow-soft'>
-                <h2 className='text-2xl font-bold text-ink mb-4'>Specialties</h2>
+                <h2 className='text-2xl font-bold text-ink mb-4'>
+                  Specialties
+                </h2>
                 <div className='flex flex-wrap gap-2'>
                   {cook.specialties.map((specialty) => (
-                    <span key={specialty} className='bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-sm font-medium'>
+                    <span
+                      key={specialty}
+                      className='bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-sm font-medium'
+                    >
                       {specialty}
                     </span>
                   ))}
@@ -246,7 +251,7 @@ export default function CookDetailPage() {
             <div className='bg-white rounded-xl p-6 shadow-soft'>
               <h2 className='text-2xl font-bold text-ink mb-4'>Menu</h2>
               <MenuList
-                cookProfileId={cook._id?.toString() || ''}
+                cookProfileId={cook._id?.toString() || ""}
                 showActions={false}
               />
             </div>
@@ -259,7 +264,7 @@ export default function CookDetailPage() {
                 </h2>
                 <button
                   onClick={() => setShowReviewForm(true)}
-                  className='btn-primary'
+                  className='btn-primary py-2 px-4'
                 >
                   Add Review
                 </button>
@@ -278,9 +283,9 @@ export default function CookDetailPage() {
 
               {/* Reviews List */}
               {reviewsLoading ? (
-                <div className="text-center py-4">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500 mx-auto"></div>
-                  <p className="text-ink-light mt-2">Loading reviews...</p>
+                <div className='text-center py-4'>
+                  <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500 mx-auto'></div>
+                  <p className='text-ink-light mt-2'>Loading reviews...</p>
                 </div>
               ) : (
                 <ReviewsList reviews={reviews} />
@@ -293,9 +298,7 @@ export default function CookDetailPage() {
             {/* Action Card */}
             <div className='bg-white rounded-xl p-6 shadow-soft'>
               <div className='text-center space-y-4'>
-                <div className='text-2xl font-bold text-primary-500'>
-                  🍽️
-                </div>
+                <div className='text-2xl font-bold text-primary-500'>🍽️</div>
                 <h3 className='text-lg font-semibold text-ink'>
                   Order from {cook.businessName}
                 </h3>
@@ -342,19 +345,23 @@ export default function CookDetailPage() {
 
             {/* Availability */}
             <div className='bg-white rounded-xl p-6 shadow-soft'>
-              <h3 className='text-lg font-semibold text-ink mb-4'>Availability</h3>
+              <h3 className='text-lg font-semibold text-ink mb-4'>
+                Availability
+              </h3>
               <div className='space-y-2 text-sm'>
                 <div className='flex justify-between'>
                   <span className='text-ink-light'>Days:</span>
                   <span className='text-ink capitalize'>
-                    {cook.availability.days.slice(0, 3).join(', ')}
-                    {cook.availability.days.length > 3 && ` +${cook.availability.days.length - 3} more`}
+                    {cook.availability.days.slice(0, 3).join(", ")}
+                    {cook.availability.days.length > 3 &&
+                      ` +${cook.availability.days.length - 3} more`}
                   </span>
                 </div>
                 <div className='flex justify-between'>
                   <span className='text-ink-light'>Hours:</span>
                   <span className='text-ink'>
-                    {cook.availability.hours.start} - {cook.availability.hours.end}
+                    {cook.availability.hours.start} -{" "}
+                    {cook.availability.hours.end}
                   </span>
                 </div>
               </div>
@@ -363,8 +370,8 @@ export default function CookDetailPage() {
             {/* Location */}
             <div className='bg-white rounded-xl p-6 shadow-soft'>
               <h3 className='text-lg font-semibold text-ink mb-4'>Location</h3>
-              <p className='text-ink-light text-sm mb-3'>{cook.location}</p>
-              <button className='w-full btn-outline'>📍 Get Directions</button>
+              <p className='text-ink-light text-sm'>{cook.location}</p>
+              {/* <button className='w-full btn-outline'>📍 Get Directions</button> */}
             </div>
           </div>
         </div>

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import HeroSection from '@/components/HeroSection';
 import CategoriesSection from '@/components/CategoriesSection';
-import PopularRestaurants from '@/components/PopularRestaurants';
+import PopularCooks from '@/components/PopularRestaurants';
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -23,7 +23,7 @@ export default function Home() {
     <div>
       <HeroSection onSearch={handleSearch} />
       <CategoriesSection onCategorySelect={handleCategorySelect} />
-      <PopularRestaurants 
+      <PopularCooks 
         searchQuery={searchQuery} 
         selectedCategory={selectedCategory} 
       />

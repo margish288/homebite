@@ -4,21 +4,21 @@ import { useEffect, useState } from 'react';
 import RestaurantCard from '@/components/RestaurantCard';
 import { ICook } from '@/models/Restaurant';
 
-interface PopularRestaurantsProps {
+interface PopularCooksProps {
   searchQuery?: string;
   selectedCategory?: string;
 }
 
-export default function PopularRestaurants({ searchQuery, selectedCategory }: PopularRestaurantsProps) {
-  const [restaurants, setRestaurants] = useState<ICook[]>([]);
+export default function PopularCooks({ searchQuery, selectedCategory }: PopularCooksProps) {
+  const [cooks, setCooks] = useState<ICook[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchRestaurants();
+    fetchCooks();
   }, [searchQuery, selectedCategory]);
 
-  const fetchRestaurants = async () => {
+  const fetchCooks = async () => {
     try {
       setLoading(true);
       setError(null);
@@ -35,17 +35,17 @@ export default function PopularRestaurants({ searchQuery, selectedCategory }: Po
         params.append('featured', 'true');
       }
 
-      const response = await fetch(`/api/restaurants?${params.toString()}`);
+      const response = await fetch(`/api/cooks?${params.toString()}`);
       const data = await response.json();
 
       if (data.success) {
-        setRestaurants(data.data);
+        setCooks(data.data);
       } else {
-        setError(data.error || 'Failed to fetch restaurants');
+        setError(data.error || 'Failed to fetch cooks');
       }
     } catch (err) {
       setError('Network error occurred');
-      console.error('Error fetching restaurants:', err);
+      console.error('Error fetching cooks:', err);
     } finally {
       setLoading(false);
     }
@@ -57,24 +57,24 @@ export default function PopularRestaurants({ searchQuery, selectedCategory }: Po
     }
     if (selectedCategory) {
       const categoryNames = {
-        delivery: 'Delivery Restaurants',
-        dining: 'Dining Restaurants',
-        nightlife: 'Nightlife Venues',
-        cafe: 'Cafes & Coffee Shops'
+        'home-meals': 'Home Meal Cooks',
+        'specialty-dishes': 'Specialty Dish Cooks', 
+        'baked-goods': 'Bakery & Dessert Cooks',
+        'healthy-options': 'Healthy Food Cooks'
       };
-      return categoryNames[selectedCategory as keyof typeof categoryNames] || 'Restaurants';
+      return categoryNames[selectedCategory as keyof typeof categoryNames] || 'Home Cooks';
     }
     return 'Popular Cooks';
   };
 
   const getSubtitle = () => {
     if (searchQuery) {
-      return `Found ${restaurants.length} restaurants`;
+      return `Found ${cooks.length} talented home cooks`;
     }
     if (selectedCategory) {
-      return `Best ${selectedCategory} options in your area`;
+      return `Amazing ${selectedCategory.replace('-', ' ')} specialists in your area`;
     }
-    return 'Trending Cooks that people love';
+    return 'Trending home cooks that people love';
   };
 
   if (loading) {
@@ -102,7 +102,7 @@ export default function PopularRestaurants({ searchQuery, selectedCategory }: Po
         <div className="container max-w-6xl mx-auto px-4 text-center">
           <div className="text-red-500 text-lg mb-4">⚠️ {error}</div>
           <button 
-            onClick={fetchRestaurants}
+            onClick={fetchCooks}
             className="btn-primary"
           >
             Try Again
@@ -124,22 +124,22 @@ export default function PopularRestaurants({ searchQuery, selectedCategory }: Po
           </p>
         </div>
 
-        {restaurants.length === 0 ? (
+        {cooks.length === 0 ? (
           <div className="text-center py-12">
             <div className="text-6xl mb-4">🍽️</div>
-            <h3 className="text-xl font-semibold text-ink mb-2">No restaurants found</h3>
+            <h3 className="text-xl font-semibold text-ink mb-2">No cooks found</h3>
             <p className="text-ink-light">Try adjusting your search or category filters</p>
           </div>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {restaurants.map((restaurant) => (
+            {cooks.map((restaurant) => (
               <RestaurantCard key={restaurant._id} restaurant={restaurant} />
             ))}
           </div>
         )}
 
         {/* Load More Button */}
-        {restaurants.length >= 6 && (
+        {cooks.length >= 6 && (
           <div className="text-center mt-12">
             <button className="btn-outline px-8 py-3">
               Load More Restaurants

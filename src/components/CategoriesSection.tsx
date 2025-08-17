@@ -11,27 +11,27 @@ interface Category {
 
 const categories: Category[] = [
   {
-    id: 'delivery',
-    title: 'Order Online',
-    description: 'Stay home and order to your doorstep',
+    id: 'home-meals',
+    title: 'Home Meals',
+    description: 'Authentic homestyle cooking from local home cooks',
     image: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=300&fit=crop',
-    icon: '🚚',
+    icon: '🏠',
     action: 'Order Now',
   },
   {
-    id: 'dining',
-    title: 'Dining Out',
-    description: 'View the city\'s favourite dining venues',
+    id: 'specialty-dishes',
+    title: 'Specialty Dishes',
+    description: 'Unique and signature dishes crafted with passion',
     image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&h=300&fit=crop',
-    icon: '🍽️',
+    icon: '⭐',
     action: 'Explore',
   },
   {
-    id: 'nightlife',
-    title: 'Nightlife',
-    description: 'Explore the city\'s top nightlife outlets',
+    id: 'baked-goods',
+    title: 'Fresh Baked',
+    description: 'Freshly baked goods and desserts from home kitchens',
     image: 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=400&h=300&fit=crop',
-    icon: '🍸',
+    icon: '🧁',
     action: 'Discover',
   },
 ];
@@ -42,41 +42,54 @@ interface CategoriesSectionProps {
 
 export default function CategoriesSection({ onCategorySelect }: CategoriesSectionProps) {
   return (
-    <section className="py-16 bg-gray-50">
-      <div className="container max-w-6xl mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-ink mb-4">
-            Explore Categories
+    <section className="py-20 bg-white relative overflow-hidden">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 hb-grid opacity-30"></div>
+      
+      <div className="relative container max-w-7xl mx-auto px-4">
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center bg-primary-400/10 text-primary-700 px-4 py-2 rounded-full text-sm font-medium mb-4">
+            🍳 Cook Categories
+          </div>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-ink mb-6">
+            What Are You{' '}
+            <span className="text-primary-500">Craving</span>{' '}
+            Today?
           </h2>
-          <p className="text-lg text-ink-light max-w-2xl mx-auto">
-            Discover the best food and dining experiences in your city
+          <p className="text-lg md:text-xl text-ink-light max-w-3xl mx-auto leading-relaxed">
+            Discover amazing home cooks in your neighborhood specializing in different types of delicious homemade food
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
-          {categories.map((category) => (
+        <div className="grid md:grid-cols-3 gap-8 mb-16">
+          {categories.map((category, index) => (
             <div
               key={category.id}
               onClick={() => onCategorySelect(category.id)}
-              className="group relative overflow-hidden rounded-xl bg-white shadow-soft hover:shadow-soft-lg transition-all duration-300 cursor-pointer"
+              className="group relative overflow-hidden rounded-2xl bg-white shadow-soft-lg hover:shadow-soft-lg hover:-translate-y-2 transition-all duration-300 cursor-pointer border border-gray-100"
+              style={{ animationDelay: `${index * 100}ms` }}
             >
               {/* Background Image */}
-              <div className="relative h-64 overflow-hidden">
+              <div className="relative h-72 overflow-hidden">
                 <img
                   src={category.image}
                   alt={category.title}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
-                <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                
+                {/* Icon Badge */}
+                <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm p-3 rounded-full">
+                  <span className="text-2xl">{category.icon}</span>
+                </div>
                 
                 {/* Content Overlay */}
-                <div className="absolute inset-0 flex flex-col justify-end p-6 text-white">
-                  <div className="text-3xl mb-2">{category.icon}</div>
-                  <h3 className="text-xl font-bold mb-2">{category.title}</h3>
-                  <p className="text-gray-200 text-sm mb-4">{category.description}</p>
+                <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+                  <h3 className="text-2xl font-bold mb-2">{category.title}</h3>
+                  <p className="text-gray-200 text-sm mb-4 leading-relaxed">{category.description}</p>
                   
-                  <button className="self-start bg-primary-400 hover:bg-primary-500 text-ink px-4 py-2 rounded-lg font-medium transition-colors">
-                    {category.action}
+                  <button className="bg-primary-400 hover:bg-primary-500 text-ink px-6 py-2.5 rounded-xl font-medium transition-all transform group-hover:scale-105">
+                    {category.action} →
                   </button>
                 </div>
               </div>
@@ -84,23 +97,46 @@ export default function CategoriesSection({ onCategorySelect }: CategoriesSectio
           ))}
         </div>
 
-        {/* Stats Section */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-16 text-center">
-          <div>
-            <div className="text-2xl md:text-3xl font-bold text-primary-500 mb-2">1000+</div>
-            <div className="text-ink-light">Restaurants</div>
+        {/* Features Section */}
+        <div className="bg-gradient-to-r from-primary-50 to-primary-100 rounded-2xl p-8 md:p-12">
+          <div className="text-center mb-8">
+            <h3 className="text-2xl md:text-3xl font-bold text-ink mb-4">
+              Why Choose HomeBite?
+            </h3>
+            <p className="text-ink-light max-w-2xl mx-auto">
+              Connect with verified home cooks who prepare meals with love and authentic recipes
+            </p>
           </div>
-          <div>
-            <div className="text-2xl md:text-3xl font-bold text-primary-500 mb-2">50K+</div>
-            <div className="text-ink-light">Happy Customers</div>
-          </div>
-          <div>
-            <div className="text-2xl md:text-3xl font-bold text-primary-500 mb-2">100+</div>
-            <div className="text-ink-light">Cities</div>
-          </div>
-          <div>
-            <div className="text-2xl md:text-3xl font-bold text-primary-500 mb-2">24/7</div>
-            <div className="text-ink-light">Support</div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            <div className="space-y-3">
+              <div className="bg-white p-4 rounded-xl shadow-soft mx-auto w-16 h-16 flex items-center justify-center">
+                <span className="text-2xl">🏠</span>
+              </div>
+              <div className="text-2xl font-bold text-primary-600">500+</div>
+              <div className="text-ink-light text-sm">Verified Home Cooks</div>
+            </div>
+            <div className="space-y-3">
+              <div className="bg-white p-4 rounded-xl shadow-soft mx-auto w-16 h-16 flex items-center justify-center">
+                <span className="text-2xl">😋</span>
+              </div>
+              <div className="text-2xl font-bold text-primary-600">25K+</div>
+              <div className="text-ink-light text-sm">Happy Customers</div>
+            </div>
+            <div className="space-y-3">
+              <div className="bg-white p-4 rounded-xl shadow-soft mx-auto w-16 h-16 flex items-center justify-center">
+                <span className="text-2xl">🌎</span>
+              </div>
+              <div className="text-2xl font-bold text-primary-600">50+</div>
+              <div className="text-ink-light text-sm">Cities</div>
+            </div>
+            <div className="space-y-3">
+              <div className="bg-white p-4 rounded-xl shadow-soft mx-auto w-16 h-16 flex items-center justify-center">
+                <span className="text-2xl">🚚</span>
+              </div>
+              <div className="text-2xl font-bold text-primary-600">30min</div>
+              <div className="text-ink-light text-sm">Average Delivery</div>
+            </div>
           </div>
         </div>
       </div>

@@ -184,7 +184,7 @@ body {
   overflow: hidden;
 }
 
-/* Dotted background utility */
+/* Background utilities */
 .hb-dots {
   background-image: radial-gradient(circle, #d1d5db 1px, transparent 1px);
   background-size: 20px 20px;
@@ -192,4 +192,25 @@ body {
 
 .dark .hb-dots {
   background-image: radial-gradient(circle, #374151 1px, transparent 1px);
+}
+
+.hb-grid {
+  background-image: 
+    linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.dark .hb-grid {
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+}
+
+.hb-gradient-bg {
+  background: linear-gradient(135deg, #fffef8 0%, #fef3c7 25%, #fde68a 50%, #fef3c7 75%, #fffef8 100%);
+}
+
+.dark .hb-gradient-bg {
+  background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 25%, #2d2d2d 50%, #1a1a1a 75%, #0f0f0f 100%);
 }

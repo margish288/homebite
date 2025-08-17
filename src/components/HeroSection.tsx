@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 
 interface HeroSectionProps {
   onSearch: (query: string) => void;
@@ -127,6 +128,28 @@ export default function HeroSection({ onSearch }: HeroSectionProps) {
                   <span className="chip text-xs cursor-pointer hover:bg-primary-100">🥗 Healthy</span>
                   <span className="chip text-xs cursor-pointer hover:bg-primary-100">🍰 Desserts</span>
                 </div>
+              </div>
+
+              {/* Auth CTAs */}
+              <div className="mt-6 pt-6 border-t border-gray-200">
+                <p className="text-sm text-ink-light mb-3 text-center">Join our community:</p>
+                <div className="grid grid-cols-2 gap-3">
+                  <Link 
+                    href="/auth/signup" 
+                    className="btn-primary py-2.5 text-sm font-medium text-center"
+                  >
+                    👤 Sign Up to Order
+                  </Link>
+                  <Link 
+                    href="/cook/auth/signup" 
+                    className="btn-outline py-2.5 text-sm font-medium text-center"
+                  >
+                    👨‍🍳 Become a Cook
+                  </Link>
+                </div>
+                <p className="text-xs text-ink-lighter text-center mt-2">
+                  Already have an account? <Link href="/auth/login" className="text-primary-500 hover:text-primary-600">Sign in</Link>
+                </p>
               </div>
             </div>
           </div>

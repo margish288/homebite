@@ -1,9 +1,13 @@
 'use client';
 
 import { useState } from 'react';
+import { useSession, signOut } from 'next-auth/react';
+import Link from 'next/link';
 
 export default function Navbar() {
   const [searchQuery, setSearchQuery] = useState('');
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const { data: session, status } = useSession();
 
   return (
     <nav className="sticky top-0 z-50 bg-paper/95 dark:bg-dark-bg/95 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700 shadow-soft">
@@ -11,10 +15,10 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
           <div className="flex items-center">
-            <a href="/" className="flex items-center space-x-2 text-xl lg:text-2xl font-bold text-ink dark:text-dark-text hover:text-primary-500 transition-colors">
+            <Link href="/" className="flex items-center space-x-2 text-xl lg:text-2xl font-bold text-ink dark:text-dark-text hover:text-primary-500 transition-colors">
               <span className="text-2xl lg:text-3xl">🍱</span>
               <span>HomeBite</span>
-            </a>
+            </Link>
           </div>
 
           {/* Search Bar - Center */}
@@ -47,15 +51,96 @@ export default function Navbar() {
 
           {/* Navigation Links */}
           <div className="hidden lg:flex items-center space-x-6">
-            <a href="/discover" className="text-ink-light dark:text-dark-text-muted hover:text-primary-500 font-medium transition-colors">
+            <Link href="/discover" className="text-ink-light dark:text-dark-text-muted hover:text-primary-500 font-medium transition-colors">
               Discover
-            </a>
-            <a href="/dashboard" className="text-ink-light dark:text-dark-text-muted hover:text-primary-500 font-medium transition-colors">
-              Cook Dashboard
-            </a>
-            <a href="/become-cook" className="btn-primary p-2">
-              Become a Cook
-            </a>
+            </Link>
+            
+            {session ? (
+              <>
+                {session.user.role === 'cook' && (
+                  <Link href="/cook/dashboard" className="text-ink-light dark:text-dark-text-muted hover:text-primary-500 font-medium transition-colors">
+                    Dashboard
+                  </Link>
+                )}
+                
+                {/* Profile Dropdown */}
+                <div className="relative">
+                  <button 
+                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                    className="flex items-center space-x-2 text-ink dark:text-dark-text hover:text-primary-500 font-medium transition-colors"
+                  >
+                    <div className="w-8 h-8 bg-primary-400 rounded-full flex items-center justify-center text-sm font-semibold text-ink">
+                      {session.user.name?.charAt(0).toUpperCase()}
+                    </div>
+                    <span>{session.user.name}</span>
+                    <svg className={`w-4 h-4 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  
+                  {isDropdownOpen && (
+                    <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-dark-surface rounded-xl shadow-soft-lg border border-gray-200 dark:border-gray-700 py-2 z-50">
+                      <Link 
+                        href={session.user.role === 'cook' ? '/cook/profile' : '/profile'}
+                        className="block px-4 py-2 text-sm text-ink dark:text-dark-text hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                        onClick={() => setIsDropdownOpen(false)}
+                      >
+                        👤 Profile
+                      </Link>
+                      {session.user.role === 'user' && (
+                        <Link 
+                          href="/orders"
+                          className="block px-4 py-2 text-sm text-ink dark:text-dark-text hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                          onClick={() => setIsDropdownOpen(false)}
+                        >
+                          📦 My Orders
+                        </Link>
+                      )}
+                      {session.user.role === 'cook' && (
+                        <>
+                          <Link 
+                            href="/cook/orders"
+                            className="block px-4 py-2 text-sm text-ink dark:text-dark-text hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                            onClick={() => setIsDropdownOpen(false)}
+                          >
+                            📋 Orders
+                          </Link>
+                          <Link 
+                            href="/cook/menu"
+                            className="block px-4 py-2 text-sm text-ink dark:text-dark-text hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                            onClick={() => setIsDropdownOpen(false)}
+                          >
+                            🍽️ Menu
+                          </Link>
+                        </>
+                      )}
+                      <hr className="my-2 border-gray-200 dark:border-gray-700" />
+                      <button 
+                        onClick={() => {
+                          setIsDropdownOpen(false);
+                          signOut({ callbackUrl: '/' });
+                        }}
+                        className="block w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                      >
+                        🚪 Sign Out
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </>
+            ) : (
+              <>
+                <Link href="/auth/login" className="text-ink-light dark:text-dark-text-muted hover:text-primary-500 font-medium transition-colors">
+                  Login
+                </Link>
+                <Link href="/auth/signup" className="btn-primary px-4 py-2">
+                  Sign Up
+                </Link>
+                <Link href="/cook/auth/signup" className="btn-outline px-4 py-2">
+                  Become a Cook
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile menu button */}

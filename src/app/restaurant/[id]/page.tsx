@@ -33,7 +33,7 @@ export default function RestaurantDetailPage() {
       setLoading(true);
       setError(null);
 
-      const response = await fetch(`/api/restaurants/${id}`);
+      const response = await fetch(`/api/cooks/${id}`);
       const data = await response.json();
 
       if (data.success) {

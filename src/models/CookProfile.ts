@@ -74,7 +74,6 @@ const CookProfileSchema = new Schema<ICookProfile>(
       type: Schema.Types.ObjectId,
       ref: 'User',
       required: [true, 'User ID is required'],
-      unique: true,
     },
     businessName: {
       type: String,
@@ -255,7 +254,7 @@ const CookProfileSchema = new Schema<ICookProfile>(
 );
 
 // Create indexes
-CookProfileSchema.index({ userId: 1 });
+CookProfileSchema.index({ userId: 1 }, { unique: true });
 CookProfileSchema.index({ verificationStatus: 1 });
 CookProfileSchema.index({ verifiedBadge: 1 });
 CookProfileSchema.index({ location: 1 });

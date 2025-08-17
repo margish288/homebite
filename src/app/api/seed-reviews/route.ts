@@ -1,38 +1,34 @@
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
-import Restaurant from '@/models/Restaurant';
+import Cook from '@/models/Cook';
 import Review from '@/models/Review';
+import { Types } from 'mongoose';
 
 const sampleReviews = [
   {
-    userId: 'user1',
     userName: 'John Doe',
     rating: 5,
-    comment: 'Amazing food and excellent service! The North Indian dishes are authentic and flavorful. Highly recommend the butter chicken and naan.',
+    comment: 'Amazing homestyle food! Priya\'s North Indian dishes are authentic and flavorful. The butter chicken and fresh naan were incredible.',
   },
   {
-    userId: 'user2',
     userName: 'Sarah Johnson',
     rating: 4,
-    comment: 'Great ambiance and delicious food. The pasta was perfectly cooked and the sauce was rich. Will definitely come back!',
+    comment: 'Great home cooking experience! Marco\'s pasta was perfectly cooked and the sauce was rich. Will definitely order again!',
   },
   {
-    userId: 'user3',
     userName: 'Mike Chen',
     rating: 4,
-    comment: 'Fresh ingredients and bold flavors. The Chinese dishes were authentic and well-prepared. Fast delivery too!',
+    comment: 'Fresh ingredients and authentic flavors. Liu\'s Chinese dishes were just like my grandmother used to make. Fast delivery too!',
   },
   {
-    userId: 'user4',
     userName: 'Emily Davis',
     rating: 5,
-    comment: 'The best burgers in town! Juicy, flavorful, and perfectly cooked. The fries were crispy and delicious.',
+    comment: 'The best homemade burgers! Juicy, flavorful, and made with love. The sweet potato fries were crispy and delicious.',
   },
   {
-    userId: 'user5',
     userName: 'Alex Wilson',
     rating: 4,
-    comment: 'Healthy options that actually taste great! The smoothie bowls and salads are fresh and filling.',
+    comment: 'Healthy home-cooked meals that actually taste amazing! The quinoa bowls and salads are fresh and very filling.',
   },
 ];
 
@@ -43,21 +39,21 @@ export async function POST() {
     // Clear existing reviews
     await Review.deleteMany({});
 
-    // Get all restaurants
-    const restaurants = await Restaurant.find({});
+    // Get all cooks
+    const cooks = await Cook.find({});
 
-    if (restaurants.length === 0) {
+    if (cooks.length === 0) {
       return NextResponse.json({
         success: false,
-        error: 'No restaurants found. Please seed restaurants first.',
+        error: 'No cooks found. Please seed cooks first.',
       }, { status: 400 });
     }
 
     const reviewsToInsert = [];
 
-    // Add reviews to each restaurant
-    for (const restaurant of restaurants) {
-      // Add 2-3 random reviews per restaurant
+    // Add reviews to each cook
+    for (const cook of cooks) {
+      // Add 2-3 random reviews per cook
       const numReviews = Math.floor(Math.random() * 2) + 2; // 2-3 reviews
       const shuffledReviews = [...sampleReviews].sort(() => 0.5 - Math.random());
 
@@ -65,8 +61,8 @@ export async function POST() {
         const review = shuffledReviews[i];
         reviewsToInsert.push({
           ...review,
-          userId: `${review.userId}_${restaurant._id}`, // Make userId unique per restaurant
-          restaurantId: restaurant._id,
+          userId: new Types.ObjectId(), // Generate a random ObjectId for userId
+          cookId: cook._id,
         });
       }
     }
@@ -74,18 +70,18 @@ export async function POST() {
     // Insert all reviews
     const insertedReviews = await Review.insertMany(reviewsToInsert);
 
-    // Update restaurant ratings based on reviews
-    for (const restaurant of restaurants) {
-      const restaurantReviews = insertedReviews.filter(
-        review => review.restaurantId.toString() === restaurant._id.toString()
+    // Update cook ratings based on reviews
+    for (const cook of cooks) {
+      const cookReviews = insertedReviews.filter(
+        review => review.cookId.toString() === cook._id.toString()
       );
 
-      if (restaurantReviews.length > 0) {
-        const averageRating = restaurantReviews.reduce(
+      if (cookReviews.length > 0) {
+        const averageRating = cookReviews.reduce(
           (sum, review) => sum + review.rating, 0
-        ) / restaurantReviews.length;
+        ) / cookReviews.length;
 
-        await Restaurant.findByIdAndUpdate(restaurant._id, {
+        await Cook.findByIdAndUpdate(cook._id, {
           rating: Math.round(averageRating * 10) / 10,
         });
       }
@@ -93,10 +89,10 @@ export async function POST() {
 
     return NextResponse.json({
       success: true,
-      message: `Successfully seeded ${insertedReviews.length} reviews across ${restaurants.length} restaurants`,
+      message: `Successfully seeded ${insertedReviews.length} reviews across ${cooks.length} home cooks`,
       data: {
         reviewsCount: insertedReviews.length,
-        restaurantsCount: restaurants.length,
+        cooksCount: cooks.length,
       },
     });
   } catch (error) {
